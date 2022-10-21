@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:health_app/viewscreen/home_screen.dart';
 import 'package:health_app/viewscreen/login_screen.dart';
 import 'package:health_app/viewscreen/settings_screen.dart';
-
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+void main() async {
   runApp(const HealthApp());
+  await Firebase.initializeApp(
+  options: DefaultFirebaseOptions.currentPlatform,
+  );
 }
 
 class HealthApp extends StatelessWidget {
