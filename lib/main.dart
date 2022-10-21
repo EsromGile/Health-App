@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:health_app/viewscreen/start_screen.dart';
+import 'package:health_app/viewscreen/home_screen.dart';
+import 'package:health_app/viewscreen/login_screen.dart';
+import 'package:health_app/viewscreen/settings_screen.dart';
 
 void main() {
   runApp(const HealthApp());
@@ -12,9 +14,11 @@ class HealthApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: StartScreen.routeName,
+      initialRoute: LoginScreen.routeName,
       routes: {
-        StartScreen.routeName:(context) => const StartScreen(),
+        HomeScreen.routeName:(context) => const HomeScreen(),
+        LoginScreen.routeName:(context) => const LoginScreen(),
+        SettingsScreen.routeName:(context) => const SettingsScreen(),
       },
     );
   }
