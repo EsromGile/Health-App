@@ -21,15 +21,9 @@ class DefaultFirebaseOptions {
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for android - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
         return macos;
       case TargetPlatform.windows:
@@ -56,6 +50,24 @@ class DefaultFirebaseOptions {
     projectId: 'seii-health-app',
     authDomain: 'seii-health-app.firebaseapp.com',
     storageBucket: 'seii-health-app.appspot.com',
+  );
+
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyDqOvuRejcX12CwOPAk8h3RdB_BrA_XXf4',
+    appId: '1:982189155226:android:0ac1579fd3be4f372b9023',
+    messagingSenderId: '982189155226',
+    projectId: 'seii-health-app',
+    storageBucket: 'seii-health-app.appspot.com',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyAVqAAgUXAVB5-t0ukIJGB2qKiBgAFK7hQ',
+    appId: '1:982189155226:ios:a32c427a0c0b7dfb2b9023',
+    messagingSenderId: '982189155226',
+    projectId: 'seii-health-app',
+    storageBucket: 'seii-health-app.appspot.com',
+    iosClientId: '982189155226-j553coaop199q1evm327f712us6vq2v2.apps.googleusercontent.com',
+    iosBundleId: 'edu.uco.group5.se4423.healthApp',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(

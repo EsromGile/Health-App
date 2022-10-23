@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "982189155226",
+    "project_id": "seii-health-app",
+    "storage_bucket": "seii-health-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:982189155226:android:0ac1579fd3be4f372b9023",
+        "android_client_info": {
+          "package_name": "edu.uco.group5.se4423.health_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "982189155226-qkg5n24rqdc5tt4m9e3s7ealfo9ugj8q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqOvuRejcX12CwOPAk8h3RdB_BrA_XXf4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "982189155226-qkg5n24rqdc5tt4m9e3s7ealfo9ugj8q.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "982189155226-j553coaop199q1evm327f712us6vq2v2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "edu.uco.group5.se4423.healthApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

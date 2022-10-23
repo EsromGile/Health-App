@@ -27,18 +27,20 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text("Kirby Collects Your Health Data"),
       ),
-      body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("This Screen Should: "),
-            const Text(" - Display user information and data"),
-            const Text(" - Display accomplishments with goal"),
-            SizedBox(
-              width: 200,
-              child: Image.asset("images/kirby-succs.png"),
-            ),
-          ],
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text("This Screen Should: "),
+              const Text(" - Display user information and data"),
+              const Text(" - Display accomplishments with goal"),
+              SizedBox(
+                width: 200,
+                child: Image.asset("images/kirby-succs.png"),
+              ),
+            ],
+          ),
         ),
       ),
     );

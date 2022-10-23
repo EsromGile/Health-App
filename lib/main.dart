@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:health_app/viewscreen/create_account_screen.dart';
 import 'package:health_app/viewscreen/home_screen.dart';
 import 'package:health_app/viewscreen/login_screen.dart';
 import 'package:health_app/viewscreen/settings_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+
 void main() async {
   runApp(const HealthApp());
   await Firebase.initializeApp(
-  options: DefaultFirebaseOptions.currentPlatform,
+    options: DefaultFirebaseOptions.currentPlatform,
   );
 }
 
@@ -20,9 +22,10 @@ class HealthApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: LoginScreen.routeName,
       routes: {
-        HomeScreen.routeName:(context) => const HomeScreen(),
-        LoginScreen.routeName:(context) => const LoginScreen(),
-        SettingsScreen.routeName:(context) => const SettingsScreen(),
+        HomeScreen.routeName: (context) => const HomeScreen(),
+        LoginScreen.routeName: (context) => const LoginScreen(),
+        SettingsScreen.routeName: (context) => const SettingsScreen(),
+        CreateAccountScreen.routeName: (context) => const CreateAccountScreen(),
       },
     );
   }
