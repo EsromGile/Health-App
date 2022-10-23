@@ -33,6 +33,7 @@ class _CreateAccountState extends State<CreateAccountScreen> {
         child: Padding(
           padding: const EdgeInsets.all(15),
           child: Form(
+            key: formKey,
             child: Column(
               children: [
                 Padding(
@@ -62,7 +63,7 @@ class _CreateAccountState extends State<CreateAccountScreen> {
                       const InputDecoration(hintText: 'Confirm Password'),
                   obscureText: true,
                   autocorrect: false,
-                  validator: con.validateConfirmedPassword,
+                  validator: con.validatePassword,
                   onSaved: con.saveConfirmedPassword,
                 ),
                 const SizedBox(
@@ -98,7 +99,7 @@ class _Controller {
     currentState.save();
 
     if (password != confirmedPassword) {
-      showSnackBar(context: state.context, message: 'Passwords must match');
+      showSnackBar(context: state.context, message: 'Passwords must match.');
       return;
     }
 
@@ -136,17 +137,7 @@ class _Controller {
     if (input == null) {
       return 'No password provided.';
     } else if (input.length < 5) {
-      return 'Password must be at least 5 characters';
-    } else {
-      return null;
-    }
-  }
-
-  String? validateConfirmedPassword(String? input) {
-    if (input == null) {
-      return 'No password provided.';
-    } else if (input != password) {
-      return 'Passwords must match.';
+      return 'Password must be at least 5 characters.';
     } else {
       return null;
     }

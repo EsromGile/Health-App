@@ -149,7 +149,7 @@ class _Controller {
     if (input == null) {
       return 'No password provided.';
     } else if (input.length < 5) {
-      return 'Password must be at least 5 characters';
+      return 'Password must be at least 5 characters.';
     } else {
       return null;
     }
