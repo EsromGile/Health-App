@@ -43,12 +43,9 @@ class _LoginScreenState extends State<LoginScreen> {
               key: formKey,
               child: Column(
                 children: [
-                  Text(
-                    "Health App",
-                    style: Theme.of(context).textTheme.headline3,
-                  ),
-                  const SizedBox(
-                    height: 20,
+                  SizedBox(
+                    height: 200,
+                    child: Image.asset("images/kirby-logo.png"),
                   ),
                   TextFormField(
                     decoration:

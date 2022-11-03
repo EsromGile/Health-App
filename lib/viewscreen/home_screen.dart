@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:health_app/viewscreen/view/view_util.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -39,6 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: 200,
                 child: Image.asset("images/kirby-succs.png"),
               ),
+              OutlinedButton(onPressed: (() => startKirbyLoading(context)), child: const Text('Start Loading')),
             ],
           ),
         ),
@@ -50,4 +52,5 @@ class _HomeScreenState extends State<HomeScreen> {
 class _Controller {
   _HomeScreenState state;
   _Controller(this.state);
+
 }
