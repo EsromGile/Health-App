@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:health_app/model/accelerometer_reading.dart';
 import 'package:health_app/model/test_readings.dart';
 
 import '../model/constant.dart';
@@ -16,7 +17,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late _Controller con;
-  late TestReadings exampledata;
+  late List<AccelerometerReading> data;
+  DateTime? currentDay;
   bool isLoaded = false;
 
   void render(fn) => setState(fn);
@@ -27,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
     con = _Controller(this);
     // only added in development
     if (Constant.devMode) {
-      exampledata = TestReadings();
+      currentDay = DateTime(2021, 6, 29);
       con.loadCSV();
     }
   }
@@ -51,8 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
               //     child: Image.asset("images/kirby-succs.png"),
               //   ),
               //   OutlinedButton(onPressed: (() => startKirbyLoading(context)), child: const Text('Start Loading')),
-              if (Constant.devMode && isLoaded == true) 
-                renderExampleData()
+              if (isLoaded == true) renderExampleData()
             ],
           ),
         ),
@@ -64,11 +65,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          for (var i = 0; i < exampledata.timestamps.length; i++)
+          for (var i = 0; i < data.length; i++)
             Row(
               children: [
-                Text("Timestamp: ${DateTime.fromMillisecondsSinceEpoch(exampledata.timestamps[i].toInt())}"),
-                Text("Movement: ${exampledata.isMoving[i]}"),
+                Text("Timestamp: ${data[i].timestamp.toString()}, "),
+                Text("Movement: ${data[i].movementOccured.toString()}"),
               ],
             ),
         ],
@@ -83,10 +84,10 @@ class _Controller {
 
   Future<void> loadCSV() async {
     try {
-      await state.exampledata.loadExampleCSV();
+      state.data = await TestReadings.loadExampleCSV();
       if (state.mounted) {
+        state.render(() => state.isLoaded = true);
       }
-      state.render(() => state.isLoaded = true);
     } catch (e) {
       if (Constant.devMode) {
         // ignore: avoid_print
