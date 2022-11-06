@@ -100,6 +100,7 @@ class _Controller {
 
   String? email;
   String? password;
+  User? user;
 
   void login() async {
     FormState? currentState = state.formKey.currentState;
@@ -107,7 +108,6 @@ class _Controller {
     if (!currentState.validate()) return;
     currentState.save();
 
-    User? user;
 
     try {
       if (email == null || password == null) {
@@ -119,8 +119,11 @@ class _Controller {
 
       //Grab user's accelerometer readings from Firestore and pass it to the home screen
 
-      Navigator.pushNamed(state.context, HomeScreen.routeName);
+      if (state.mounted) {
+        Navigator.pushNamed(state.context, HomeScreen.routeName);
+      }
     } catch (e) {
+      // ignore: avoid_print
       if (Constant.devMode) print('Log In Error: $e');
       showSnackBar(context: state.context, message: 'Log In Error: $e');
     }

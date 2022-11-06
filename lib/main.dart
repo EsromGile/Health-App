@@ -21,7 +21,8 @@ class HealthApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Kirby Collects Your Health Data',
-      initialRoute: LoginScreen.routeName,
+      // initialRoute: LoginScreen.routeName,
+      initialRoute: HomeScreen.routeName,
       theme: ThemeData(
         colorScheme:
             ColorScheme.fromSwatch().copyWith(primary: const Color(0xFFF8BBD0)),

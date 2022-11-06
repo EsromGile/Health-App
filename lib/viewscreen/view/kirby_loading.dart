@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:math' as Math;
+import 'dart:math' as math;
 
 class KirbyLoading extends StatefulWidget {
   const KirbyLoading({Key? key}) : super(key: key);
@@ -24,7 +24,7 @@ class _KirbyLoadingState extends State<KirbyLoading> with TickerProviderStateMix
           animation: _controller,
           builder: (BuildContext context, Widget? child) { 
             return Transform.rotate(
-              angle: _controller.value * Math.pi * 2,       //rotates a full circle
+              angle: _controller.value * math.pi * 2,       //rotates a full circle
               child: child,
             );
           },

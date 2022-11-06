@@ -112,6 +112,7 @@ class _Controller {
           message:
               'Account has been created! Go back to Login Screen to use the account!');
     } catch (e) {
+      // ignore: avoid_print
       if (Constant.devMode) print('Create Account Error: $e');
       showSnackBar(context: state.context, message: 'Create Account Error: $e');
     }
