@@ -38,6 +38,8 @@ dependencies:
   firebase_auth: ^4.0.2
   cloud_firestore: ^4.0.2
   csv: ^5.0.1
+  date_time_format: ^2.0.1
+  charts_flutter: ^0.12.0
 
 dev_dependencies:
   flutter_test:
@@ -66,6 +68,7 @@ flutter:
     - images/kirby-succs.png
     - images/kirby-logo.png
     - images/kirby-loading.png
+    - images/Kirby_Loading_Message.png
     - files/example-data.csv
 
   # An image asset can refer to one or more resolution-specific "variants", see
