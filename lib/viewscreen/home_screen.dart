@@ -1,17 +1,23 @@
 // ignore: import_of_legacy_library_into_null_safe
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:health_app/model/accelerometer_reading.dart';
 import 'package:health_app/model/test_readings.dart';
 import 'package:health_app/viewscreen/chart_builder.dart';
 import 'package:date_time_format/date_time_format.dart';
+import 'package:health_app/viewscreen/settings_screen.dart';
+import 'package:health_app/viewscreen/view/view_util.dart';
 
 
+import '../controller/firebase_authentication_controller.dart';
 import '../model/constant.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({required this.user, Key? key,}) : super(key: key);
 
   static const routeName = "/startScreen";
+
+  final User user;
 
   @override
   State<StatefulWidget> createState() {
@@ -45,6 +51,27 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Kirby Collects Your Health Data"),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            UserAccountsDrawerHeader(
+              currentAccountPicture: const Icon(Icons.person, size: 70,),
+              accountName: const Text('No Profile'),
+              accountEmail: Text(widget.user.email!),
+            ),
+            ListTile(
+                leading: const Icon(Icons.settings),
+                title: const Text('Settings'),
+                onTap: con.settings,
+            ),
+            ListTile(
+                leading: const Icon(Icons.logout),
+                title: const Text('Sign Out'),
+                onTap: con.signOut,
+            ),
+          ],
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -91,6 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
 class _Controller {
   _HomeScreenState state;
   _Controller(this.state);
+  
 
   Future<void> loadCSV() async {
     try {
@@ -105,5 +133,29 @@ class _Controller {
         print("======= couldn't load csv: $e");
       }
     }
+  }
+
+  void signOut() {
+      Future<void> signOut() async {
+      try {
+        await FirebaseAuthenticationController.signOut();
+      } catch (e) {
+        if(Constant.devMode) print('Sign Out Error: $e');
+        showSnackBar(context: state.context, message: 'Sign Out Error: $e');
+      } 
+
+      Navigator.of(state.context).pop();
+      Navigator.of(state.context).pop();
+    }
+  }
+
+  void settings() {
+    Navigator.pushNamed(
+          state.context, 
+          SettingsScreen.routeName,
+          arguments: {
+            ArgKey.user: state.widget.user,
+          }
+        );
   }
 }

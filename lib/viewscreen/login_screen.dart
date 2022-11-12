@@ -120,7 +120,13 @@ class _Controller {
       //Grab user's accelerometer readings from Firestore and pass it to the home screen
 
       if (state.mounted) {
-        Navigator.pushNamed(state.context, HomeScreen.routeName);
+        Navigator.pushNamed(
+          state.context, 
+          HomeScreen.routeName,
+          arguments: {
+            ArgKey.user: user,
+          }
+        );
       }
     } catch (e) {
       // ignore: avoid_print

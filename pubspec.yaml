@@ -69,6 +69,7 @@ flutter:
     - images/kirby-logo.png
     - images/kirby-loading.png
     - images/Kirby_Loading_Message.png
+    - images/kirby-error-message.png
     - files/example-data.csv
 
   # An image asset can refer to one or more resolution-specific "variants", see

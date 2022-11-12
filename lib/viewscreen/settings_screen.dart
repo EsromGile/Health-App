@@ -1,9 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:health_app/model/user_account.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+  const SettingsScreen({required this.user, Key? key}) : super(key: key);
 
   static const routeName = "/settingsScreen";
+
+  final User user;
 
   @override
   State<StatefulWidget> createState() {
@@ -13,6 +17,9 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   late _Controller con;
+  var formKey = GlobalKey<FormState>();
+  bool editMode = false;
+
   void render(fn) => setState(fn);
 
   @override
@@ -25,16 +32,73 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Login Screen"),
+        title: const Text("Settings"),
+        actions: [
+          editMode ? IconButton(onPressed: con.save, icon: const Icon(Icons.save)) : 
+          IconButton(onPressed: con.edit, icon: const Icon(Icons.edit)),
+        ],
       ),
-      body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text("This Screen Should: "),
-            Text(" - Display user settings/goals"),
-            Text(" - Interface to update settings/goals")
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        const Expanded(
+                          flex: 1,
+                          child: Icon(Icons.cloud_upload)
+                        ),
+                        const Expanded(
+                          flex: 4,
+                          child: Text('Cloud Upload Frequency')
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: DropdownButtonFormField(
+                            items: [
+                              for(var i in uploadFrequency.entries)
+                                DropdownMenuItem(child: Text(i.key), value: i.value,)
+                            ], 
+                            onChanged: editMode ? con.onChangedUploadFrequency : null,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Divider(height: 30, thickness: 1,),
+                    Row(
+                      children: [
+                        const Expanded(
+                          flex: 1,
+                          child: Icon(Icons.timeline)
+                        ),
+                        const Expanded(
+                          flex: 4,
+                          child: Text('Data Collection Frequency')
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: DropdownButtonFormField(
+                            items: [
+                              for(var i in dataCollectionFrequency.entries)
+                                DropdownMenuItem(child: Text(i.key), value: i.value,)
+                            ],
+                            onChanged: editMode ? con.onChangedDataCollectionFrequency : null,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Divider(height: 30, thickness: 1,),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -44,4 +108,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
 class _Controller {
   _SettingsScreenState state;
   _Controller(this.state);
+
+  
+
+  void onChangedUploadFrequency(int? value) {
+  }
+
+  void onChangedDataCollectionFrequency(int? value) {
+  }
+
+  void edit() {
+    state.render(() => state.editMode = true);
+  }
+
+  void save() {
+    state.render(() => state.editMode = false);
+  }
 }
