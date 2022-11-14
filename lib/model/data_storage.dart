@@ -1,13 +1,9 @@
-import 'package:health_app/model/accelerometer_reading.dart';
-import 'package:health_app/model/user_account.dart';
+import 'package:health_app/model/data.dart';
 
-class DataStorage {
-  final UserAccount user;
-  late List<AccelerometerReading> readings;
+class DataStorage extends MyData {
 
-  DataStorage({required this.user}) {
-    readings = List.empty();
+  DataStorage({required user, required today}) : super(user: user, today: today) {
+    readings = user.getReadings();
   }
-
-  // calculate most active time period in a given range
+  
 }

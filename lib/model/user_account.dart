@@ -1,25 +1,29 @@
-
+import 'package:health_app/model/accelerometer_reading.dart';
 import 'package:health_app/model/account_settings.dart';
+import 'package:health_app/model/constant.dart';
+import 'package:health_app/model/data.dart';
 import 'package:health_app/model/data_storage.dart';
+import 'package:health_app/model/test_readings.dart';
 
 class UserAccount {
-  late final DataStorage storage;
+  late final MyData storage;
   late final AccountSettings settings;
   late String email;
 
   UserAccount({required this.email}) {
-    storage = DataStorage(user: this);
+    if (Constant.exampleData) {
+      storage = TestReadings();
+    } else {
+      storage = DataStorage(user: this, today: DateTime.now());
+    }
     settings = AccountSettings(user: this);
   }
+
+  List<AccelerometerReading> getReadings() {
+    //get readings from DB
+    return List.empty();
+  }
 }
-
-// enum DataCollectionFrequency {
-//   thirtySeconds, oneMinute, twoMinutes
-// }
-
-// enum UploadFrequency {
-//   daily, threeHours, twelveHours, onLogin
-// }
 
 Map<String, int> dataCollectionFrequency = {
   "30 Seconds": 30,
