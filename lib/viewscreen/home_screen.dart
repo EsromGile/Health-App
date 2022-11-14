@@ -8,12 +8,14 @@ import 'package:date_time_format/date_time_format.dart';
 import 'package:health_app/viewscreen/settings_screen.dart';
 import 'package:health_app/viewscreen/view/view_util.dart';
 
-
 import '../controller/firebase_authentication_controller.dart';
 import '../model/constant.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({required this.user, Key? key,}) : super(key: key);
+  const HomeScreen({
+    required this.user,
+    Key? key,
+  }) : super(key: key);
 
   static const routeName = "/startScreen";
 
@@ -56,19 +58,22 @@ class _HomeScreenState extends State<HomeScreen> {
         child: ListView(
           children: [
             UserAccountsDrawerHeader(
-              currentAccountPicture: const Icon(Icons.person, size: 70,),
+              currentAccountPicture: const Icon(
+                Icons.person,
+                size: 70,
+              ),
               accountName: const Text('No Profile'),
               accountEmail: Text(widget.user.email!),
             ),
             ListTile(
-                leading: const Icon(Icons.settings),
-                title: const Text('Settings'),
-                onTap: con.settings,
+              leading: const Icon(Icons.settings),
+              title: const Text('Settings'),
+              onTap: con.settings,
             ),
             ListTile(
-                leading: const Icon(Icons.logout),
-                title: const Text('Sign Out'),
-                onTap: con.signOut,
+              leading: const Icon(Icons.logout),
+              title: const Text('Sign Out'),
+              onTap: con.signOut,
             ),
           ],
         ),
@@ -118,7 +123,6 @@ class _HomeScreenState extends State<HomeScreen> {
 class _Controller {
   _HomeScreenState state;
   _Controller(this.state);
-  
 
   Future<void> loadCSV() async {
     try {
@@ -134,28 +138,25 @@ class _Controller {
       }
     }
   }
+  
+  Future<void> signOut() async {
+    try {
+      await FirebaseAuthenticationController.signOut();
+    } catch (e) {
+      if (Constant.devMode) print('Sign Out Error: $e');
+      showSnackBar(context: state.context, message: 'Sign Out Error: $e');
+    }
 
-  void signOut() {
-      Future<void> signOut() async {
-      try {
-        await FirebaseAuthenticationController.signOut();
-      } catch (e) {
-        if(Constant.devMode) print('Sign Out Error: $e');
-        showSnackBar(context: state.context, message: 'Sign Out Error: $e');
-      } 
-
+    if (state.mounted) {
       Navigator.of(state.context).pop();
       Navigator.of(state.context).pop();
     }
   }
+  
 
   void settings() {
-    Navigator.pushNamed(
-          state.context, 
-          SettingsScreen.routeName,
-          arguments: {
-            ArgKey.user: state.widget.user,
-          }
-        );
+    Navigator.pushNamed(state.context, SettingsScreen.routeName, arguments: {
+      ArgKey.user: state.widget.user,
+    });
   }
 }

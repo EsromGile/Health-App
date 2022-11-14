@@ -9,10 +9,11 @@ import 'firebase_options.dart';
 import 'model/constant.dart';
 
 void main() async {
-  runApp(const HealthApp());
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  runApp(const HealthApp());
 }
 
 class HealthApp extends StatelessWidget {
@@ -23,6 +24,7 @@ class HealthApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Kirby Collects Your Health Data',
+      // initialRoute: HomeScreen.routeName,
       initialRoute: LoginScreen.routeName,
       theme: ThemeData(
         colorScheme:
