@@ -9,7 +9,7 @@ class UserAccount {
 
   UserAccount({required this.email}) {
     storage = DataStorage(user: this);
-    settings = AccountSettings(user: this);
+    settings = AccountSettings();
   }
 }
 

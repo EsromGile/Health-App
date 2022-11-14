@@ -1,6 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:health_app/controller/firebase_firestore_controller.dart';
+import 'package:health_app/model/account_settings.dart';
 import 'package:health_app/model/user_account.dart';
+import 'package:health_app/viewscreen/view/view_util.dart';
+
+import '../model/constant.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({required this.user, Key? key}) : super(key: key);
@@ -118,7 +123,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
 class _Controller {
   _SettingsScreenState state;
-  _Controller(this.state);
+  _Controller(this.state) {
+    refresh();
+  }
+  late AccountSettings settings;
+
+  void refresh() {
+    state.render(getAccountSettings());
+  }
 
   void returnHome() {
     Navigator.pop(state.context);
@@ -135,5 +147,14 @@ class _Controller {
 
   void save() {
     state.render(() => state.editMode = false);
+  }
+
+  Future<void> getAccountSettings() async{
+    try {
+      settings = await FirebaseFirestoreController.getSettings(uid:state.widget.user.uid);
+    } catch (e) {
+      if (Constant.devMode) print('Account settings get Error: $e');
+      showSnackBar(context: state.context, message: 'Account settings get Error: $e');
+    }
   }
 }
