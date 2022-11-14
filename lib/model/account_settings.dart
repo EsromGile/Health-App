@@ -8,13 +8,11 @@ enum DocKeyAccountSettings {
 }
 class AccountSettings {
   String? docId; //firestore generated id
-  late UserAccount user;
   late String uid;
   late int uploadRate;          // every 30 minutes
   late int collectionFrequency;  // every 5 minutes 
 
   AccountSettings({
-    required this.user,
     this.docId,
     this.uid = '',
     this.uploadRate = 30,
@@ -23,7 +21,6 @@ class AccountSettings {
 
   Map<String, dynamic> toFirestoreDoc() {
     return {
-      DocKeyAccountSettings.user.name: user,
       DocKeyAccountSettings.docId.name: docId,
       DocKeyAccountSettings.uid.name: uid,
       DocKeyAccountSettings.uploadRate.name: uploadRate,
@@ -37,7 +34,6 @@ class AccountSettings {
   }) {
     return AccountSettings(
       docId: docId,
-      user: doc[DocKeyAccountSettings.user.name] ?? 'N/A',
       uid: doc[DocKeyAccountSettings.uid.name] ?? 'N/A',
       uploadRate: doc[DocKeyAccountSettings.uploadRate.name] ?? 'N/A',
       collectionFrequency: doc[DocKeyAccountSettings.collectionFrequency.name] ?? 'N/A',

@@ -17,6 +17,8 @@ class UserAccount {
       storage = DataStorage(user: this, today: DateTime.now());
     }
     settings = AccountSettings(user: this);
+    storage = DataStorage(user: this);
+    settings = AccountSettings();
   }
 
   List<AccelerometerReading> getReadings() {

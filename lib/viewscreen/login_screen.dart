@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:health_app/controller/firebase_authentication_controller.dart';
+import 'package:health_app/controller/firebase_firestore_controller.dart';
+import 'package:health_app/model/account_settings.dart';
 import 'package:health_app/model/constant.dart';
 import 'package:health_app/viewscreen/create_account_screen.dart';
 import 'package:health_app/viewscreen/home_screen.dart';
@@ -116,6 +118,14 @@ class _Controller {
 
       user = await FirebaseAuthenticationController.signIn(
           email: email!, password: password!);
+
+      //test if settings data exists. if not, create it
+      var profileExists =
+          await FirebaseFirestoreController.checkSettings(uid: user!.uid);
+      if (!profileExists) {
+        AccountSettings s = AccountSettings(uid: user!.uid);
+        await FirebaseFirestoreController.createSettings(settings: s);
+      }
 
       //Grab user's accelerometer readings from Firestore and pass it to the home screen
 
