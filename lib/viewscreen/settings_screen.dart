@@ -32,10 +32,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: con.returnHome,
+        ),
         title: const Text("Settings"),
         actions: [
-          editMode ? IconButton(onPressed: con.save, icon: const Icon(Icons.save)) : 
-          IconButton(onPressed: con.edit, icon: const Icon(Icons.edit)),
+          editMode
+              ? IconButton(onPressed: con.save, icon: const Icon(Icons.save))
+              : IconButton(onPressed: con.edit, icon: const Icon(Icons.edit)),
         ],
       ),
       body: SingleChildScrollView(
@@ -51,49 +56,55 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     Row(
                       children: [
                         const Expanded(
-                          flex: 1,
-                          child: Icon(Icons.cloud_upload)
-                        ),
+                            flex: 1, child: Icon(Icons.cloud_upload)),
                         const Expanded(
-                          flex: 4,
-                          child: Text('Cloud Upload Frequency')
-                        ),
+                            flex: 4, child: Text('Cloud Upload Frequency')),
                         Expanded(
                           flex: 2,
                           child: DropdownButtonFormField(
                             items: [
-                              for(var i in uploadFrequency.entries)
-                                DropdownMenuItem(child: Text(i.key), value: i.value,)
-                            ], 
-                            onChanged: editMode ? con.onChangedUploadFrequency : null,
+                              for (var i in uploadFrequency.entries)
+                                DropdownMenuItem(
+                                  value: i.value,
+                                  child: Text(i.key),
+                                )
+                            ],
+                            onChanged:
+                                editMode ? con.onChangedUploadFrequency : null,
                           ),
                         ),
                       ],
                     ),
-                    const Divider(height: 30, thickness: 1,),
+                    const Divider(
+                      height: 30,
+                      thickness: 1,
+                    ),
                     Row(
                       children: [
+                        const Expanded(flex: 1, child: Icon(Icons.timeline)),
                         const Expanded(
-                          flex: 1,
-                          child: Icon(Icons.timeline)
-                        ),
-                        const Expanded(
-                          flex: 4,
-                          child: Text('Data Collection Frequency')
-                        ),
+                            flex: 4, child: Text('Data Collection Frequency')),
                         Expanded(
                           flex: 2,
                           child: DropdownButtonFormField(
                             items: [
-                              for(var i in dataCollectionFrequency.entries)
-                                DropdownMenuItem(child: Text(i.key), value: i.value,)
+                              for (var i in dataCollectionFrequency.entries)
+                                DropdownMenuItem(
+                                  value: i.value,
+                                  child: Text(i.key),
+                                )
                             ],
-                            onChanged: editMode ? con.onChangedDataCollectionFrequency : null,
+                            onChanged: editMode
+                                ? con.onChangedDataCollectionFrequency
+                                : null,
                           ),
                         ),
                       ],
                     ),
-                    const Divider(height: 30, thickness: 1,),
+                    const Divider(
+                      height: 30,
+                      thickness: 1,
+                    ),
                   ],
                 ),
               ),
@@ -109,13 +120,14 @@ class _Controller {
   _SettingsScreenState state;
   _Controller(this.state);
 
-  
-
-  void onChangedUploadFrequency(int? value) {
+  void returnHome() {
+    Navigator.pop(state.context);
+    Navigator.pop(state.context);
   }
 
-  void onChangedDataCollectionFrequency(int? value) {
-  }
+  void onChangedUploadFrequency(int? value) {}
+
+  void onChangedDataCollectionFrequency(int? value) {}
 
   void edit() {
     state.render(() => state.editMode = true);
