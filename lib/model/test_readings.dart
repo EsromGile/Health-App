@@ -1,11 +1,15 @@
 import 'package:csv/csv.dart';
 import 'package:flutter/services.dart';
 import 'package:health_app/model/accelerometer_reading.dart';
+import 'package:health_app/model/data.dart';
 
-class TestReadings {
+class TestReadings extends MyData {
+  TestReadings()
+      : super(user: null, today: DateTime(2021, 6, 29));
+
   static Future<List<AccelerometerReading>> loadExampleCSV() async {
     Duration interval = const Duration(hours: 1);
-    DateTime current = DateTime(2021, 6, 29, 0);
+    DateTime current = DateTime(2021, 6, 29);
 
     List<AccelerometerReading> data = [];
     try {

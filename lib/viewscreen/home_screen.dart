@@ -1,7 +1,7 @@
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:health_app/model/accelerometer_reading.dart';
+import 'package:health_app/model/data.dart';
 import 'package:health_app/model/test_readings.dart';
 import 'package:health_app/viewscreen/chart_builder.dart';
 import 'package:date_time_format/date_time_format.dart';
@@ -29,8 +29,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late _Controller con;
-  late List<AccelerometerReading> data;
-  late DateTime today;
+  late MyData? data;
+  DateTime today = DateTime.now();
   bool isLoaded = false;
 
   void render(fn) => setState(fn);
@@ -39,13 +39,10 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     con = _Controller(this);
-    // only added in development
+    con.loadData();
     if (Constant.devMode) {
-      con.loadCSV();
       today = DateTime(2021, 6, 29);
-    } else {
-      // To be determined
-    }
+    } 
   }
 
   @override
@@ -100,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.8,
             width: MediaQuery.of(context).size.width * 0.8,
-            child: HorizontalBarLabelChart.fromData(data),
+            child: HorizontalBarLabelChart.fromData(data!.readings),
           ),
         ],
       );
@@ -124,25 +121,34 @@ class _Controller {
   _HomeScreenState state;
   _Controller(this.state);
 
-  Future<void> loadCSV() async {
+  Future<void> loadData() async {
     try {
-      state.data = await TestReadings.loadExampleCSV();
-      await Future.delayed(const Duration(seconds: 1));
-      if (state.mounted) {
-        state.render(() => state.isLoaded = true);
+      if (Constant.exampleData) {
+        state.data = TestReadings();
+        state.data!.readings = await TestReadings.loadExampleCSV();
+        await Future.delayed(const Duration(seconds: 1));
+        if (state.mounted) {
+          state.render(() => state.isLoaded = true);
+        }
+      } else {
+        /*
+          - this is where we would call the data down from firebase using 
+              UserAccound getReadings() method
+          - need to remove nullability from state.data after implementation
+        */
+        state.data = null;
       }
     } catch (e) {
-      if (Constant.devMode) {
-        // ignore: avoid_print
-        print("======= couldn't load csv: $e");
-      }
+      // ignore: avoid_print
+      print("======= couldn't load data: $e");
     }
   }
-  
+
   Future<void> signOut() async {
     try {
       await FirebaseAuthenticationController.signOut();
     } catch (e) {
+      // ignore: avoid_print
       if (Constant.devMode) print('Sign Out Error: $e');
       showSnackBar(context: state.context, message: 'Sign Out Error: $e');
     }
@@ -152,7 +158,6 @@ class _Controller {
       Navigator.of(state.context).pop();
     }
   }
-  
 
   void settings() {
     Navigator.pushNamed(state.context, SettingsScreen.routeName, arguments: {
