@@ -79,6 +79,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           items: [
                             for (var i in uploadFrequency.entries)
                               DropdownMenuItem(
+                                enabled: con.settings.uploadRate == i.value,
                                 value: i.value,
                                 child: Text(i.key),
                               )
@@ -110,9 +111,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           items: [
                             for (var i in dataCollectionFrequency.entries)
                               DropdownMenuItem(
+                                enabled: con.settings.collectionFrequency == i.value,
                                 value: i.value,
                                 child: Text(i.key),
                               )
+                            
                           ],
                           onChanged: screenModel.editMode
                               ? con.onChangedDataCollectionFrequency
@@ -141,15 +144,16 @@ class _Controller {
     /*
       bug...*wagging finger*
     */
-    // refresh();
+    refresh();
   }
   late AccountSettings settings;
   /*
       bug...*wagging finger*
     */
-  // void refresh() {
-  //   state.render(getAccountSettings());
-  // }
+  void refresh() {
+      getAccountSettings();
+      state.render((){});
+  }
 
   void returnHome() {
     Navigator.of(state.context).pop();
@@ -168,7 +172,7 @@ class _Controller {
     state.render(() => state.screenModel.editMode = false);
   }
 
-  void getAccountSettings() async {
+  Future<void> getAccountSettings() async {
     try {
       settings = await FirebaseFirestoreController.getSettings(
           uid: state.screenModel.user.uid);

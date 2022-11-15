@@ -42,4 +42,12 @@ class FirebaseFirestoreController {
         return AccountSettings();
       }
   }
+
+  static Future<void> updateSettings(
+      {required String docId, required Map<String, dynamic> update}) async {
+    await FirebaseFirestore.instance
+        .collection(Constant.settingsCollection)
+        .doc(docId)
+        .update(update);
+  }
 }
