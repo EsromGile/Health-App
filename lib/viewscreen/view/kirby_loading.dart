@@ -4,7 +4,6 @@ import 'dart:math' as math;
 class KirbyLoading extends StatefulWidget {
   const KirbyLoading({Key? key}) : super(key: key);
 
-
   @override
   State<StatefulWidget> createState() {
     return _KirbyLoadingState();

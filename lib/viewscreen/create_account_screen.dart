@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:health_app/controller/firebase_authentication_controller.dart';
+import 'package:health_app/controller/auth_controller.dart';
 import 'package:health_app/model/constant.dart';
+import 'package:health_app/model/viewscreen_models/create_accountscreen_model.dart';
 import 'package:health_app/viewscreen/view/view_util.dart';
 
 class CreateAccountScreen extends StatefulWidget {
@@ -15,12 +17,14 @@ class CreateAccountScreen extends StatefulWidget {
 
 class _CreateAccountState extends State<CreateAccountScreen> {
   late _Controller con;
+  late CreateAccountScreenModel screenModel;
   var formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
     con = _Controller(this);
+    screenModel = CreateAccountScreenModel();
   }
 
   void render(fn) => setState(fn);
@@ -48,23 +52,23 @@ class _CreateAccountState extends State<CreateAccountScreen> {
                       const InputDecoration(hintText: 'Enter Email Address'),
                   keyboardType: TextInputType.emailAddress,
                   autocorrect: false,
-                  validator: con.validateEmail,
-                  onSaved: con.saveEmail,
+                  validator: screenModel.validateEmail,
+                  onSaved: screenModel.saveEmail,
                 ),
                 TextFormField(
                   decoration: const InputDecoration(hintText: 'Enter Password'),
                   obscureText: true,
                   autocorrect: false,
-                  validator: con.validatePassword,
-                  onSaved: con.savePassword,
+                  validator: screenModel.validatePassword,
+                  onSaved: screenModel.savePassword,
                 ),
                 TextFormField(
                   decoration:
                       const InputDecoration(hintText: 'Confirm Password'),
                   obscureText: true,
                   autocorrect: false,
-                  validator: con.validatePassword,
-                  onSaved: con.saveConfirmedPassword,
+                  validator: screenModel.validatePassword,
+                  onSaved: screenModel.savePasswordConf,
                 ),
                 const SizedBox(
                   height: 20,
@@ -89,70 +93,44 @@ class _Controller {
   late _CreateAccountState state;
   _Controller(this.state);
 
-  String? email;
-  String? password;
-  String? confirmedPassword;
-
-  void createAccount() async {
+  Future<void> createAccount() async {
     FormState? currentState = state.formKey.currentState;
     if (currentState == null || !currentState.validate()) return;
     currentState.save();
 
-    if (password != confirmedPassword) {
-      showSnackBar(context: state.context, message: 'Passwords must match.');
+    if (state.screenModel.password != state.screenModel.passwordConf) {
+      showSnackBar(
+        context: state.context,
+        message: 'Passwords must match.',
+        seconds: 5,
+      );
       return;
     }
 
     try {
-      await FirebaseAuthenticationController.createAccount(
-          email: email!, password: password!);
-
+      await Auth.createAccount(
+        email: state.screenModel.email!,
+        password: state.screenModel.password!,
+      );
+      if (state.mounted) {
+        Navigator.of(state.context).pop();
+      }
+    } on FirebaseAuthException catch (e) {
+      // ignore: avoid_print
+      if (Constant.devMode) print("======= failed to create: $e");
       showSnackBar(
-          context: state.context,
-          message:
-              'Account has been created! Go back to Login Screen to use the account!');
+        context: state.context,
+        message: "${e.code} ${e.message}",
+        seconds: 5,
+      );
     } catch (e) {
       // ignore: avoid_print
       if (Constant.devMode) print('Create Account Error: $e');
-      showSnackBar(context: state.context, message: 'Create Account Error: $e');
-    }
-  }
-
-  String? validateEmail(String? input) {
-    if (input == null) {
-      return 'No email address provided.';
-    } else if (!(input.contains('@') && input.contains('.'))) {
-      return 'Invalid format.';
-    } else {
-      return null;
-    }
-  }
-
-  void saveEmail(String? input) {
-    if (input != null) {
-      email = input;
-    }
-  }
-
-  String? validatePassword(String? input) {
-    if (input == null) {
-      return 'No password provided.';
-    } else if (input.length < 5) {
-      return 'Password must be at least 5 characters.';
-    } else {
-      return null;
-    }
-  }
-
-  void savePassword(String? input) {
-    if (input != null) {
-      password = input;
-    }
-  }
-
-  void saveConfirmedPassword(String? input) {
-    if (input != null) {
-      confirmedPassword = input;
+      showSnackBar(
+        context: state.context,
+        message: 'Create Account Error: $e',
+        seconds: 5,
+      );
     }
   }
 }

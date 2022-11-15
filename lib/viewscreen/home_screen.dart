@@ -1,25 +1,19 @@
 // ignore: import_of_legacy_library_into_null_safe
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:health_app/model/data.dart';
-import 'package:health_app/model/test_readings.dart';
-import 'package:health_app/viewscreen/chart_builder.dart';
+// ignore_for_file: prefer_const_constructors
+
 import 'package:date_time_format/date_time_format.dart';
+import 'package:flutter/material.dart';
+import 'package:health_app/model/test_readings.dart';
+import 'package:health_app/model/viewscreen_models/homescreen_model.dart';
+import 'package:health_app/viewscreen/chart_builder.dart';
 import 'package:health_app/viewscreen/settings_screen.dart';
 import 'package:health_app/viewscreen/view/view_util.dart';
 
-import '../controller/firebase_authentication_controller.dart';
+import '../controller/auth_controller.dart';
 import '../model/constant.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({
-    required this.user,
-    Key? key,
-  }) : super(key: key);
-
-  static const routeName = "/startScreen";
-
-  final User user;
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -29,9 +23,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late _Controller con;
-  late MyData? data;
-  DateTime today = DateTime.now();
-  bool isLoaded = false;
+  late HomeScreenModel screenModel;
 
   void render(fn) => setState(fn);
 
@@ -39,10 +31,11 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     con = _Controller(this);
+    screenModel = HomeScreenModel(user: Auth.user!);
     con.loadData();
     if (Constant.devMode) {
-      today = DateTime(2021, 6, 29);
-    } 
+      screenModel.today = DateTime(2021, 6, 29);
+    }
   }
 
   @override
@@ -60,7 +53,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 size: 70,
               ),
               accountName: const Text('No Profile'),
-              accountEmail: Text(widget.user.email!),
+              accountEmail: Text("temp@test.com"),
+              // accountEmail: Text(widget.user.email!),
             ),
             ListTile(
               leading: const Icon(Icons.settings),
@@ -87,17 +81,17 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget viewGraphs() {
-    if (isLoaded) {
+    if (screenModel.isLoaded) {
       return Column(
         children: [
           Text(
-            today.format("M d, Y"),
+            screenModel.today.format("M d, Y"),
             style: Theme.of(context).textTheme.headline5,
           ),
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.8,
             width: MediaQuery.of(context).size.width * 0.8,
-            child: HorizontalBarLabelChart.fromData(data!.readings),
+            child: HorizontalBarLabelChart.fromData(screenModel.data!.readings),
           ),
         ],
       );
@@ -124,11 +118,11 @@ class _Controller {
   Future<void> loadData() async {
     try {
       if (Constant.exampleData) {
-        state.data = TestReadings();
-        state.data!.readings = await TestReadings.loadExampleCSV();
+        state.screenModel.data = TestReadings();
+        state.screenModel.data!.readings = await TestReadings.loadExampleCSV();
         await Future.delayed(const Duration(seconds: 1));
         if (state.mounted) {
-          state.render(() => state.isLoaded = true);
+          state.render(() => state.screenModel.isLoaded = true);
         }
       } else {
         /*
@@ -136,7 +130,7 @@ class _Controller {
               UserAccound getReadings() method
           - need to remove nullability from state.data after implementation
         */
-        state.data = null;
+        state.screenModel.data = null;
       }
     } catch (e) {
       // ignore: avoid_print
@@ -144,24 +138,11 @@ class _Controller {
     }
   }
 
-  Future<void> signOut() async {
-    try {
-      await FirebaseAuthenticationController.signOut();
-    } catch (e) {
-      // ignore: avoid_print
-      if (Constant.devMode) print('Sign Out Error: $e');
-      showSnackBar(context: state.context, message: 'Sign Out Error: $e');
-    }
-
-    if (state.mounted) {
-      Navigator.of(state.context).pop();
-      Navigator.of(state.context).pop();
-    }
+  void signOut() {
+    Auth.signOut();
   }
 
   void settings() {
-    Navigator.pushNamed(state.context, SettingsScreen.routeName, arguments: {
-      ArgKey.user: state.widget.user,
-    });
+    Navigator.pushNamed(state.context, SettingsScreen.routeName);
   }
 }

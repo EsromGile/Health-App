@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
-class FirebaseAuthenticationController {
+class Auth {
   static User? user;
   // pass login info to firebase to verify login
   static Future<User?> signIn({
