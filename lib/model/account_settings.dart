@@ -12,6 +12,10 @@ class AccountSettings {
   late int uploadRate;          // every 30 minutes
   late int collectionFrequency;  // every 5 minutes 
 
+  static const UID = 'uid';
+  static const UPLOADRATE = 'uploadRate';
+  static const COLLECTIONRATE = 'collectionFrequency';
+
   AccountSettings({
     this.docId,
     this.uid = '',

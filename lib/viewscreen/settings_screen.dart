@@ -111,11 +111,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           items: [
                             for (var i in dataCollectionFrequency.entries)
                               DropdownMenuItem(
-                                enabled: con.settings.collectionFrequency == i.value,
+                                enabled:
+                                    con.settings.collectionFrequency == i.value,
                                 value: i.value,
                                 child: Text(i.key),
                               )
-                            
                           ],
                           onChanged: screenModel.editMode
                               ? con.onChangedDataCollectionFrequency
@@ -151,8 +151,8 @@ class _Controller {
       bug...*wagging finger*
     */
   void refresh() {
-      getAccountSettings();
-      state.render((){});
+    getAccountSettings();
+    state.render(() {});
   }
 
   void returnHome() {
@@ -160,16 +160,41 @@ class _Controller {
     Navigator.of(state.context).pop();
   }
 
-  void onChangedUploadFrequency(int? value) {}
+  void onChangedUploadFrequency(int? value) {
+    if (value != null) settings.uploadRate = value;
+  }
 
-  void onChangedDataCollectionFrequency(int? value) {}
+  void onChangedDataCollectionFrequency(int? value) {
+    if (value != null) settings.collectionFrequency = value;
+  }
 
   void edit() {
     state.render(() => state.screenModel.editMode = true);
   }
 
-  void save() {
-    state.render(() => state.screenModel.editMode = false);
+  void save() async{
+
+    FormState? currentState = state.formKey.currentState;
+    if (currentState == null || !currentState.validate()) {
+      Navigator.pop(state.context);
+      return;
+    }
+    currentState.save();
+
+    if (settings.docId == null) return;
+
+    Map<String, dynamic> updateInfo = {};
+    updateInfo[AccountSettings.COLLECTIONRATE] = settings.collectionFrequency;
+    updateInfo[AccountSettings.UPLOADRATE] = settings.uploadRate;
+    try {
+      FirebaseFirestoreController.updateSettings(docId: settings.docId!, update: updateInfo);
+    } catch (e) {
+      if (Constant.devMode) print('++++ update settings error $e');
+      showSnackBar(context: state.context, message: 'update settings error: $e', seconds: 10);
+    }
+    state.render(() {
+      state.screenModel.editMode = false;
+    });
   }
 
   Future<void> getAccountSettings() async {
