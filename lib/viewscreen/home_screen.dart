@@ -1,13 +1,9 @@
-// ignore: import_of_legacy_library_into_null_safe
-// ignore_for_file: prefer_const_constructors
-
 import 'package:date_time_format/date_time_format.dart';
 import 'package:flutter/material.dart';
 import 'package:health_app/model/test_readings.dart';
 import 'package:health_app/model/viewscreen_models/homescreen_model.dart';
 import 'package:health_app/viewscreen/chart_builder.dart';
 import 'package:health_app/viewscreen/settings_screen.dart';
-import 'package:health_app/viewscreen/view/view_util.dart';
 
 import '../controller/auth_controller.dart';
 import '../model/constant.dart';
@@ -33,9 +29,9 @@ class _HomeScreenState extends State<HomeScreen> {
     con = _Controller(this);
     screenModel = HomeScreenModel(user: Auth.user!);
     con.loadData();
-    if (Constant.devMode) {
-      screenModel.today = DateTime(2021, 6, 29);
-    }
+    // if (Constant.devMode) {
+    //   screenModel.today = DateTime(2021, 6, 29);
+    // }
   }
 
   @override
@@ -53,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 size: 70,
               ),
               accountName: const Text('No Profile'),
-              accountEmail: Text("temp@test.com"),
+              accountEmail: Text(screenModel.user.email.toString()),
               // accountEmail: Text(widget.user.email!),
             ),
             ListTile(
@@ -120,6 +116,7 @@ class _Controller {
       if (Constant.exampleData) {
         state.screenModel.data = TestReadings();
         state.screenModel.data!.readings = await TestReadings.loadExampleCSV();
+        state.screenModel.data!.normalizeData();
         await Future.delayed(const Duration(seconds: 1));
         if (state.mounted) {
           state.render(() => state.screenModel.isLoaded = true);

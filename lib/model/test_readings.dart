@@ -18,7 +18,7 @@ class TestReadings extends MyData {
           const CsvToListConverter().convert(rawData);
 
       // add some buffer time
-      var start = DateTime.fromMillisecondsSinceEpoch(listData[0][3].toInt());
+      var start = DateTime.fromMillisecondsSinceEpoch(listData[0][8].toInt());
       while (current.isBefore(start)) {
         data.add(AccelerometerReading(timestamp: current, movementOccured: 0));
         current = current.add(interval);
@@ -27,7 +27,7 @@ class TestReadings extends MyData {
       // add the timestamps from csv
       for (int i = 0; i < listData.length; i++) {
         DateTime time =
-            DateTime.fromMillisecondsSinceEpoch(listData[i][3].toInt());
+            DateTime.fromMillisecondsSinceEpoch(listData[i][8].toInt());
         data.add(
           AccelerometerReading(
               timestamp: time, movementOccured: listData[i][7].toInt()),
