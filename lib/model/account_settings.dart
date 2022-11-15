@@ -25,7 +25,6 @@ class AccountSettings {
 
   Map<String, dynamic> toFirestoreDoc() {
     return {
-      DocKeyAccountSettings.docId.name: docId,
       DocKeyAccountSettings.uid.name: uid,
       DocKeyAccountSettings.uploadRate.name: uploadRate,
       DocKeyAccountSettings.collectionFrequency.name: collectionFrequency,

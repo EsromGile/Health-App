@@ -6,7 +6,10 @@ import 'package:health_app/viewscreen/chart_builder.dart';
 import 'package:health_app/viewscreen/settings_screen.dart';
 
 import '../controller/auth_controller.dart';
+import '../controller/firebase_firestore_controller.dart';
+import '../model/account_settings.dart';
 import '../model/constant.dart';
+import 'view/view_util.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -28,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     con = _Controller(this);
     screenModel = HomeScreenModel(user: Auth.user!);
+    con.settingsCheck();
     con.loadData();
     // if (Constant.devMode) {
     //   screenModel.today = DateTime(2021, 6, 29);
@@ -141,5 +145,23 @@ class _Controller {
 
   void settings() {
     Navigator.pushNamed(state.context, SettingsScreen.routeName);
+  }
+
+  Future<void> settingsCheck() async{
+    try {
+      //test if settings data exists. if not, create it
+      var settingsExists =
+          await FirebaseFirestoreController.checkSettings(uid: state.screenModel.user.uid);
+      if (!settingsExists) {
+        AccountSettings s = AccountSettings(uid: state.screenModel.user.uid);
+        s.docId = await FirebaseFirestoreController.createSettings(settings: s);
+      }
+      else {
+        print('settings exist already girl');
+      }
+    } catch (e) {
+      if (Constant.devMode) print('++++ settings check/create error $e');
+      showSnackBar(context: state.context, message: 'settings check/creation error $e');
+    }
   }
 }

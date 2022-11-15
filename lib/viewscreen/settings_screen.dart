@@ -146,13 +146,13 @@ class _Controller {
     */
     refresh();
   }
-  late AccountSettings settings;
+ AccountSettings settings = AccountSettings();
   /*
       bug...*wagging finger*
     */
-  void refresh() {
-    getAccountSettings();
-    state.render(() {});
+  void refresh() async{
+    await getAccountSettings();
+    state.render(() => print(settings.collectionFrequency));
   }
 
   void returnHome() {

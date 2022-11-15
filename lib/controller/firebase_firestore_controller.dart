@@ -24,9 +24,10 @@ class FirebaseFirestoreController {
     }
   }
 
-  static Future<void> createSettings({required AccountSettings settings}) async {
-    await FirebaseFirestore.instance
+  static Future<String> createSettings({required AccountSettings settings}) async {
+    var ref = await FirebaseFirestore.instance
         .collection(Constant.settingsCollection).add(settings.toFirestoreDoc());
+    return ref.id;
   }
 
   static Future<AccountSettings> getSettings({required String uid}) async {
