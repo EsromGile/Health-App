@@ -146,7 +146,7 @@ class _Controller {
 
   void settings() {
     SettingsScreenModel settingsScreenModel = SettingsScreenModel(user: state.screenModel.user);
-    Navigator.pushNamed(state.context, SettingsScreen.routeName);
+    Navigator.pushNamed(state.context, SettingsScreen.routeName, arguments: {ArgKey.settingsScreenModel: settingsScreenModel});
   }
 
   Future<void> settingsCheck() async{

@@ -31,7 +31,7 @@ class HealthApp extends StatelessWidget {
         SettingsScreen.routeName: (context) {
           Object? args = ModalRoute.of(context)?.settings.arguments;
           if (args == null) {
-            return ErrorScreen('args is null for settings screen');
+            return const ErrorScreen('args is null for settings screen');
           } else {
             var arguments = args as Map;
             var settingsScreenModel = arguments[ArgKey.settingsScreenModel];

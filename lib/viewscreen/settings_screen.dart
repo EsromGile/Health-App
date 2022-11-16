@@ -22,7 +22,6 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   late _Controller con;
-  late SettingsScreenModel screenModel;
   var formKey = GlobalKey<FormState>();
 
   void render(fn) => setState(fn);
@@ -31,7 +30,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void initState() {
     super.initState();
     con = _Controller(this);
-    screenModel = SettingsScreenModel(user: Auth.user!);
   }
 
   @override
@@ -44,7 +42,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         title: const Text("Settings"),
         actions: [
-          screenModel.editMode
+          widget.settingsScreenModel.editMode
               ? IconButton(onPressed: con.save, icon: const Icon(Icons.save))
               : IconButton(onPressed: con.edit, icon: const Icon(Icons.edit)),
         ],
@@ -85,7 +83,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 child: Text(i.key),
                               )
                           ],
-                          onChanged: screenModel.editMode
+                          onChanged: widget.settingsScreenModel.editMode
                               ? con.onChangedUploadFrequency
                               : null,
                         ),
@@ -118,7 +116,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 child: Text(i.key),
                               )
                           ],
-                          onChanged: screenModel.editMode
+                          onChanged: widget.settingsScreenModel.editMode
                               ? con.onChangedDataCollectionFrequency
                               : null,
                         ),
@@ -153,7 +151,7 @@ class _Controller {
     */
   void refresh() async{
     await getAccountSettings();
-    state.render(() => print(settings.collectionFrequency));
+    state.render(() => {});
   }
 
   void returnHome() {
@@ -170,7 +168,7 @@ class _Controller {
   }
 
   void edit() {
-    state.render(() => state.screenModel.editMode = true);
+    state.render(() => state.widget.settingsScreenModel.editMode = true);
   }
 
   void save() async{
@@ -194,14 +192,14 @@ class _Controller {
       showSnackBar(context: state.context, message: 'update settings error: $e', seconds: 10);
     }
     state.render(() {
-      state.screenModel.editMode = false;
+      state.widget.settingsScreenModel.editMode = false;
     });
   }
 
   Future<void> getAccountSettings() async {
     try {
       settings = await FirebaseFirestoreController.getSettings(
-          uid: state.screenModel.user.uid);
+          uid: state.widget.settingsScreenModel.user.uid);
     } catch (e) {
       // ignore: avoid_print
       if (Constant.devMode) print('Account settings get Error: $e');
