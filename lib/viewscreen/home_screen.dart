@@ -2,6 +2,7 @@ import 'package:date_time_format/date_time_format.dart';
 import 'package:flutter/material.dart';
 import 'package:health_app/model/test_readings.dart';
 import 'package:health_app/model/viewscreen_models/homescreen_model.dart';
+import 'package:health_app/model/viewscreen_models/settings_screen_model.dart';
 import 'package:health_app/viewscreen/chart_builder.dart';
 import 'package:health_app/viewscreen/settings_screen.dart';
 
@@ -144,6 +145,7 @@ class _Controller {
   }
 
   void settings() {
+    SettingsScreenModel settingsScreenModel = SettingsScreenModel(user: state.screenModel.user);
     Navigator.pushNamed(state.context, SettingsScreen.routeName);
   }
 

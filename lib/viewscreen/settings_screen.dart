@@ -9,9 +9,10 @@ import '../controller/auth_controller.dart';
 import '../model/constant.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+  const SettingsScreen({Key? key, required this.settingsScreenModel }) : super(key: key);
 
   static const routeName = "/settingsScreen";
+  final SettingsScreenModel settingsScreenModel;
 
   @override
   State<StatefulWidget> createState() {

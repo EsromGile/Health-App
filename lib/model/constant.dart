@@ -5,5 +5,5 @@ class Constant {
 }
 
 enum ArgKey {
-  user,
+  user, settingsScreenModel
 }
