@@ -75,6 +75,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Expanded(
                         flex: 2,
                         child: DropdownButtonFormField(
+                          value: con.settings.uploadRate,
                           items: [
                             for (var i in uploadFrequency.entries)
                               DropdownMenuItem(
@@ -106,6 +107,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Expanded(
                         flex: 2,
                         child: DropdownButtonFormField(
+                          value: con.settings.collectionFrequency,
                           items: [
                             for (var i in dataCollectionFrequency.entries)
                               DropdownMenuItem(
