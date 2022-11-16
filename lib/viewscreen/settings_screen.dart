@@ -78,7 +78,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           items: [
                             for (var i in uploadFrequency.entries)
                               DropdownMenuItem(
-                                enabled: con.settings.uploadRate == i.value,
                                 value: i.value,
                                 child: Text(i.key),
                               )
@@ -110,8 +109,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           items: [
                             for (var i in dataCollectionFrequency.entries)
                               DropdownMenuItem(
-                                enabled:
-                                    con.settings.collectionFrequency == i.value,
                                 value: i.value,
                                 child: Text(i.key),
                               )
