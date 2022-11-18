@@ -19,8 +19,8 @@ class AccountSettings {
   AccountSettings({
     this.docId,
     this.uid = '',
-    this.uploadRate = 30,
-    this.collectionFrequency = 5,
+    this.uploadRate = 5,
+    this.collectionFrequency = 30,
   });
 
   Map<String, dynamic> toFirestoreDoc() {

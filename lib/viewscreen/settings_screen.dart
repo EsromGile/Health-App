@@ -150,7 +150,8 @@ class _Controller {
     */
   void refresh() async{
     await getAccountSettings();
-    state.render(() => {});
+    state.render(() {
+    });
   }
 
   void returnHome() {
