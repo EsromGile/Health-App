@@ -5,7 +5,6 @@ import 'package:health_app/viewscreen/error_screen.dart';
 import 'package:health_app/viewscreen/settings_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:health_app/viewscreen/start_dispatcher.dart';
-import 'package:health_app/viewscreen/view/view_util.dart';
 import 'firebase_options.dart';
 
 void main() async {
