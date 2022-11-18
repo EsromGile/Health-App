@@ -1,16 +1,16 @@
 import 'package:date_time_format/date_time_format.dart';
 import 'package:flutter/material.dart';
+import 'package:health_app/controller/auth_controller.dart';
+import 'package:health_app/controller/firebase_firestore_controller.dart';
+import 'package:health_app/model/account_settings.dart';
+import 'package:health_app/model/constant.dart';
 import 'package:health_app/model/test_readings.dart';
 import 'package:health_app/model/viewscreen_models/homescreen_model.dart';
 import 'package:health_app/model/viewscreen_models/settings_screen_model.dart';
 import 'package:health_app/viewscreen/chart_builder.dart';
 import 'package:health_app/viewscreen/settings_screen.dart';
+import 'package:health_app/viewscreen/view/view_util.dart';
 
-import '../controller/auth_controller.dart';
-import '../controller/firebase_firestore_controller.dart';
-import '../model/account_settings.dart';
-import '../model/constant.dart';
-import 'view/view_util.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -34,9 +34,6 @@ class _HomeScreenState extends State<HomeScreen> {
     screenModel = HomeScreenModel(user: Auth.user!);
     con.settingsCheck();
     con.loadData();
-    // if (Constant.devMode) {
-    //   screenModel.today = DateTime(2021, 6, 29);
-    // }
   }
 
   @override
@@ -55,7 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               accountName: const Text('No Profile'),
               accountEmail: Text(screenModel.user.email.toString()),
-              // accountEmail: Text(widget.user.email!),
             ),
             ListTile(
               leading: const Icon(Icons.settings),
@@ -159,9 +155,11 @@ class _Controller {
         s.docId = await FirebaseFirestoreController.createSettings(settings: s);
       }
       else {
+        // ignore: avoid_print
         print('settings exist already girl');
       }
     } catch (e) {
+      // ignore: avoid_print
       if (Constant.devMode) print('++++ settings check/create error $e');
       showSnackBar(context: state.context, message: 'settings check/creation error $e');
     }

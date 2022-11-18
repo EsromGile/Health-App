@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:health_app/model/account_settings.dart';
 import 'package:health_app/model/constant.dart';
 import 'package:health_app/model/user_account.dart';
-
-import '../model/account_settings.dart';
 
 class FirebaseFirestoreController {
   final UserAccount account; /* we need both settings and data storage 

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:health_app/controller/firebase_firestore_controller.dart';
 import 'package:health_app/model/account_settings.dart';
-import 'package:health_app/model/user_account.dart';
+import 'package:health_app/model/constant.dart';
 import 'package:health_app/model/viewscreen_models/settings_screen_model.dart';
 import 'package:health_app/viewscreen/view/view_util.dart';
 
-import '../controller/auth_controller.dart';
-import '../model/constant.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key, required this.settingsScreenModel }) : super(key: key);
@@ -69,7 +67,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         child: Icon(Icons.cloud_upload),
                       ),
                       const Expanded(
-                        flex: 4,
+                        flex: 3,
                         child: Text('Cloud Upload Frequency'),
                       ),
                       Expanded(
@@ -101,8 +99,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         child: Icon(Icons.timeline),
                       ),
                       const Expanded(
-                        flex: 4,
-                        child: Text('Data Collection Frequency'),
+                        flex: 3,
+                        child: Text('Data Collection Frequency', textAlign: TextAlign.center,),
                       ),
                       Expanded(
                         flex: 2,
@@ -139,15 +137,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 class _Controller {
   _SettingsScreenState state;
   _Controller(this.state) {
-    /*
-      bug...*wagging finger*
-    */
     refresh();
   }
  AccountSettings settings = AccountSettings();
-  /*
-      bug...*wagging finger*
-    */
   void refresh() async{
     await getAccountSettings();
     state.render(() => {});
@@ -187,6 +179,7 @@ class _Controller {
     try {
       FirebaseFirestoreController.updateSettings(docId: settings.docId!, update: updateInfo);
     } catch (e) {
+      // ignore: avoid_print
       if (Constant.devMode) print('++++ update settings error $e');
       showSnackBar(context: state.context, message: 'update settings error: $e', seconds: 10);
     }
