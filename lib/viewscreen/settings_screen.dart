@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:health_app/controller/auth_controller.dart';
 import 'package:health_app/controller/firebase_firestore_controller.dart';
 import 'package:health_app/model/account_settings.dart';
 import 'package:health_app/model/constant.dart';
 import 'package:health_app/model/viewscreen_models/settings_screen_model.dart';
+import 'package:health_app/viewscreen/view/kirby_loading.dart';
 import 'package:health_app/viewscreen/view/view_util.dart';
 
-
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({Key? key, required this.settingsScreenModel }) : super(key: key);
+  const SettingsScreen({Key? key}) : super(key: key);
 
   static const routeName = "/settingsScreen";
-  final SettingsScreenModel settingsScreenModel;
 
   @override
   State<StatefulWidget> createState() {
@@ -20,6 +20,8 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   late _Controller con;
+  late SettingsScreenModel screenModel;
+  late AccountSettings settings;
   var formKey = GlobalKey<FormState>();
 
   void render(fn) => setState(fn);
@@ -27,6 +29,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
+    screenModel = SettingsScreenModel(user: Auth.user!);
+    settings = AccountSettings();
     con = _Controller(this);
   }
 
@@ -40,12 +44,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         title: const Text("Settings"),
         actions: [
-          widget.settingsScreenModel.editMode
+          screenModel.editMode
               ? IconButton(onPressed: con.save, icon: const Icon(Icons.save))
               : IconButton(onPressed: con.edit, icon: const Icon(Icons.edit)),
         ],
       ),
-      body: settingsForm(),
+      body:
+          screenModel.isLoadingUnderway ? const KirbyLoading() : settingsForm(),
     );
   }
 
@@ -73,7 +78,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Expanded(
                         flex: 2,
                         child: DropdownButtonFormField(
-                          value: con.settings.uploadRate,
+                          value: con.state.settings.uploadRate,
                           items: [
                             for (var i in uploadFrequency.entries)
                               DropdownMenuItem(
@@ -81,7 +86,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 child: Text(i.key),
                               )
                           ],
-                          onChanged: widget.settingsScreenModel.editMode
+                          onChanged: screenModel.editMode
                               ? con.onChangedUploadFrequency
                               : null,
                         ),
@@ -100,12 +105,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       const Expanded(
                         flex: 3,
-                        child: Text('Data Collection Frequency', textAlign: TextAlign.center,),
+                        child: Text(
+                          'Data Collection Frequency',
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                       Expanded(
                         flex: 2,
                         child: DropdownButtonFormField(
-                          value: con.settings.collectionFrequency,
+                          value: con.state.settings.collectionFrequency,
                           items: [
                             for (var i in dataCollectionFrequency.entries)
                               DropdownMenuItem(
@@ -113,7 +121,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 child: Text(i.key),
                               )
                           ],
-                          onChanged: widget.settingsScreenModel.editMode
+                          onChanged: screenModel.editMode
                               ? con.onChangedDataCollectionFrequency
                               : null,
                         ),
@@ -139,8 +147,7 @@ class _Controller {
   _Controller(this.state) {
     refresh();
   }
- AccountSettings settings = AccountSettings();
-  void refresh() async{
+  void refresh() async {
     await getAccountSettings();
     state.render(() => {});
   }
@@ -151,19 +158,18 @@ class _Controller {
   }
 
   void onChangedUploadFrequency(int? value) {
-    if (value != null) settings.uploadRate = value;
+    if (value != null) state.settings.uploadRate = value;
   }
 
   void onChangedDataCollectionFrequency(int? value) {
-    if (value != null) settings.collectionFrequency = value;
+    if (value != null) state.settings.collectionFrequency = value;
   }
 
   void edit() {
-    state.render(() => state.widget.settingsScreenModel.editMode = true);
+    state.render(() => state.screenModel.editMode = true);
   }
 
-  void save() async{
-
+  void save() async {
     FormState? currentState = state.formKey.currentState;
     if (currentState == null || !currentState.validate()) {
       Navigator.pop(state.context);
@@ -171,28 +177,37 @@ class _Controller {
     }
     currentState.save();
 
-    if (settings.docId == null) return;
+    if (state.settings.docId == null) return;
 
     Map<String, dynamic> updateInfo = {};
-    updateInfo[AccountSettings.COLLECTIONRATE] = settings.collectionFrequency;
-    updateInfo[AccountSettings.UPLOADRATE] = settings.uploadRate;
+    updateInfo[AccountSettings.COLLECTIONRATE] = state.settings.collectionFrequency;
+    updateInfo[AccountSettings.UPLOADRATE] = state.settings.uploadRate;
     try {
-      FirebaseFirestoreController.updateSettings(docId: settings.docId!, update: updateInfo);
+      FirebaseFirestoreController.updateSettings(
+          docId: state.settings.docId!, update: updateInfo);
     } catch (e) {
       // ignore: avoid_print
       if (Constant.devMode) print('++++ update settings error $e');
-      showSnackBar(context: state.context, message: 'update settings error: $e', seconds: 10);
+      showSnackBar(
+          context: state.context,
+          message: 'update settings error: $e',
+          seconds: 10);
     }
     state.render(() {
-      state.widget.settingsScreenModel.editMode = false;
+      state.screenModel.editMode = false;
     });
   }
 
   Future<void> getAccountSettings() async {
+    state.render(() => state.screenModel.isLoadingUnderway = true);
+
     try {
-      settings = await FirebaseFirestoreController.getSettings(
-          uid: state.widget.settingsScreenModel.user.uid);
+      state.settings = await FirebaseFirestoreController.getSettings(
+          uid: state.screenModel.user.uid);
+      state.render(() => state.screenModel.isLoadingUnderway = false);
     } catch (e) {
+      state.render(() => state.screenModel.isLoadingUnderway = false);
+
       // ignore: avoid_print
       if (Constant.devMode) print('Account settings get Error: $e');
       showSnackBar(
@@ -201,5 +216,6 @@ class _Controller {
         seconds: 5,
       );
     }
+    
   }
 }

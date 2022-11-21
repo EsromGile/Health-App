@@ -6,7 +6,6 @@ import 'package:health_app/model/account_settings.dart';
 import 'package:health_app/model/constant.dart';
 import 'package:health_app/model/test_readings.dart';
 import 'package:health_app/model/viewscreen_models/homescreen_model.dart';
-import 'package:health_app/model/viewscreen_models/settings_screen_model.dart';
 import 'package:health_app/viewscreen/chart_builder.dart';
 import 'package:health_app/viewscreen/settings_screen.dart';
 import 'package:health_app/viewscreen/view/view_util.dart';
@@ -141,8 +140,7 @@ class _Controller {
   }
 
   void settings() {
-    SettingsScreenModel settingsScreenModel = SettingsScreenModel(user: state.screenModel.user);
-    Navigator.pushNamed(state.context, SettingsScreen.routeName, arguments: {ArgKey.settingsScreenModel: settingsScreenModel});
+    Navigator.pushNamed(state.context, SettingsScreen.routeName);
   }
 
   Future<void> settingsCheck() async{
