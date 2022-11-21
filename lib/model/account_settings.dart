@@ -1,4 +1,4 @@
-import 'package:health_app/model/user_account.dart';
+// ignore_for_file: constant_identifier_names
 enum DocKeyAccountSettings {
   docId,
   user,

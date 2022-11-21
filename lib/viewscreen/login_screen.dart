@@ -1,8 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:health_app/controller/auth_controller.dart';
-import 'package:health_app/controller/firebase_firestore_controller.dart';
-import 'package:health_app/model/account_settings.dart';
 import 'package:health_app/model/constant.dart';
 import 'package:health_app/model/viewscreen_models/loginscreen_model.dart';
 import 'package:health_app/viewscreen/create_account_screen.dart';
