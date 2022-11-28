@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:health_app/model/accelerometer_collect.dart';
 import 'package:health_app/model/account_settings.dart';
 import 'package:health_app/model/constant.dart';
 import 'package:health_app/model/user_account.dart';
 
 class FirebaseFirestoreController {
-  final UserAccount account; /* we need both settings and data storage 
+  final UserAccount
+      account; /* we need both settings and data storage 
                                might as well make it easy on ourselves*/
   FirebaseFirestoreController({required this.account});
 
@@ -23,9 +25,11 @@ class FirebaseFirestoreController {
     }
   }
 
-  static Future<String> createSettings({required AccountSettings settings}) async {
+  static Future<String> createSettings(
+      {required AccountSettings settings}) async {
     var ref = await FirebaseFirestore.instance
-        .collection(Constant.settingsCollection).add(settings.toFirestoreDoc());
+        .collection(Constant.settingsCollection)
+        .add(settings.toFirestoreDoc());
     return ref.id;
   }
 
@@ -35,12 +39,13 @@ class FirebaseFirestoreController {
         .where('uid', isEqualTo: uid)
         .get();
     var document = reference.docs[0].data();
-    var s = AccountSettings.fromFirestoreDoc(doc: document, docId: reference.docs[0].id);
-      if (s != null) {
-        return s;
-      } else {
-        return AccountSettings();
-      }
+    var s = AccountSettings.fromFirestoreDoc(
+        doc: document, docId: reference.docs[0].id);
+    if (s != null) {
+      return s;
+    } else {
+      return AccountSettings();
+    }
   }
 
   static Future<void> updateSettings(
@@ -49,5 +54,16 @@ class FirebaseFirestoreController {
         .collection(Constant.settingsCollection)
         .doc(docId)
         .update(update);
+  }
+
+  static Future<String> addAccelerometerData(
+      {required AccelerometerCollect accelCollect}) async {
+    String accelerometerDataCollection = 'accelerometerdata_collection';
+    DocumentReference ref = await FirebaseFirestore.instance
+        .collection(accelerometerDataCollection)
+        .add(accelCollect.toFirestoreDoc());
+    print("${ref.id}");
+
+    return ref.id;
   }
 }
