@@ -6,7 +6,7 @@ import 'package:date_time_format/date_time_format.dart';
 
 class HorizontalBarLabelChart extends StatelessWidget {
   final List<charts.Series<dynamic, String>> seriesList;
-  final bool animate = true;
+  final bool animate = false;
 
   const HorizontalBarLabelChart(this.seriesList, {super.key});
 

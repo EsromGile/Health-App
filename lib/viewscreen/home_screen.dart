@@ -1,7 +1,6 @@
 // ignore_for_file: avoid_print
 
 import 'dart:async';
-import 'dart:ffi';
 
 import 'package:date_time_format/date_time_format.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +8,6 @@ import 'package:health_app/controller/auth_controller.dart';
 import 'package:health_app/controller/firebase_firestore_controller.dart';
 import 'package:health_app/model/account_settings.dart';
 import 'package:health_app/model/constant.dart';
-import 'package:health_app/model/data.dart';
 import 'package:health_app/model/test_readings.dart';
 import 'package:health_app/model/viewscreen_models/homescreen_model.dart';
 import 'package:health_app/viewscreen/chart_builder.dart';
@@ -98,8 +96,8 @@ class _HomeScreenState extends State<HomeScreen> {
     if (screenModel.isLoaded) {
       return Column(
         children: [
-          Text('${settings.uploadRate}'),
-          Text('${settings.collectionFrequency}'),
+          // Text('${settings.uploadRate}'),
+          // Text('${settings.collectionFrequency}'),
           Text(
             screenModel.today.format("M d, Y"),
             style: Theme.of(context).textTheme.headline5,
