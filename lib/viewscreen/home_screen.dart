@@ -23,6 +23,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late _Controller con;
   late HomeScreenModel screenModel;
+  late AccountSettings settings;
 
   void render(fn) => setState(fn);
 
@@ -32,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
     con = _Controller(this);
     screenModel = HomeScreenModel(user: Auth.user!);
     con.settingsCheck();
+    con.pullSettings();
     con.loadData();
   }
 
@@ -80,6 +82,8 @@ class _HomeScreenState extends State<HomeScreen> {
     if (screenModel.isLoaded) {
       return Column(
         children: [
+          Text('${settings.uploadRate}'),
+          Text('${settings.collectionFrequency}'),
           Text(
             screenModel.today.format("M d, Y"),
             style: Theme.of(context).textTheme.headline5,
@@ -160,6 +164,21 @@ class _Controller {
       // ignore: avoid_print
       if (Constant.devMode) print('++++ settings check/create error $e');
       showSnackBar(context: state.context, message: 'settings check/creation error $e');
+    }
+  }
+
+  Future<void> pullSettings() async {
+    try {
+      state.settings = await FirebaseFirestoreController.getSettings(
+          uid: state.screenModel.user.uid);
+    } catch (e) {
+      // ignore: avoid_print
+      if (Constant.devMode) print('Account settings get Error: $e');
+      showSnackBar(
+        context: state.context,
+        message: 'Account settings get Error: $e',
+        seconds: 5,
+      );
     }
   }
 }
