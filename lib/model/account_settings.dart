@@ -19,7 +19,7 @@ class AccountSettings {
   AccountSettings({
     this.docId,
     this.uid = '',
-    this.uploadRate = 3,
+    this.uploadRate = 1,
     this.collectionFrequency = 30,
   });
 

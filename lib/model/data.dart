@@ -1,3 +1,4 @@
+import 'package:health_app/model/accelerometer_collect.dart';
 import 'package:health_app/model/accelerometer_reading.dart';
 import 'package:health_app/model/user_account.dart';
 
@@ -6,6 +7,7 @@ class MyData {
   DateTime today;
   final UserAccount? user;
   late List<AccelerometerReading> readings;
+  late List<AccelerometerCollect> accelCollection; //
 
   MyData({
     required this.user,
@@ -36,4 +38,8 @@ class MyData {
     readings = List.from(normalizedReadings);
     // display them on the graph
   }
+
+  void initAccel(){
+    accelCollection = [];// turn into accelcollection pulls from firestore?
+  } 
 }
