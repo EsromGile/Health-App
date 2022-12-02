@@ -1,11 +1,10 @@
-// ignore_for_file: avoid_print
-
 import 'dart:async';
 
 import 'package:date_time_format/date_time_format.dart';
 import 'package:flutter/material.dart';
 import 'package:health_app/controller/auth_controller.dart';
 import 'package:health_app/controller/firebase_firestore_controller.dart';
+import 'package:health_app/model/accelerometer_collect.dart';
 import 'package:health_app/model/account_settings.dart';
 import 'package:health_app/model/constant.dart';
 import 'package:health_app/model/test_readings.dart';
@@ -14,8 +13,6 @@ import 'package:health_app/viewscreen/chart_builder.dart';
 import 'package:health_app/viewscreen/settings_screen.dart';
 import 'package:health_app/viewscreen/view/view_util.dart';
 import 'package:sensors_plus/sensors_plus.dart';
-
-import '../model/accelerometer_collect.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -35,7 +32,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    
     super.initState();
     screenModel = HomeScreenModel(user: Auth.user!);
     con = _Controller(this);
@@ -45,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
     con.pullSettings();
     con.loadData();
     con.initAccel();
-    con.initTimer();
+    con.initCollection();
   }
 
   @override
@@ -119,68 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       );
     }
-  }
-
-  void startTimer() {
-    try {
-      AccelerometerEvent? accelEvent;
-      screenModel.accelSub = accelerometerEvents.listen((eve) {
-        if (mounted) {
-          setState(() {
-            accelEvent = eve;
-          });
-        }
-      });
-
-      if (screenModel.timer == null || screenModel.timer!.isActive) {
-        screenModel.timer = Timer.periodic(
-            Duration(seconds: settings.collectionFrequency), (timer) {
-          if (screenModel.count > 3) {
-            pauseTimer();
-          } else {
-            activeAccelerometer(accelEvent);
-          }
-        });
-      }
-    } catch (e) {
-      print("ERROR: startTimer() ----- $e");
-    }
-  }
-
-  Future<void> activeAccelerometer(AccelerometerEvent? eve) async {
-    try {
-      DateTime timestamp = DateTime.now();
-      double? x = eve?.x;
-      double? y = eve?.y;
-      double? z = eve?.z;
-      print("$timestamp: $x | $y | $z");
-      AccelerometerCollect ac = AccelerometerCollect(
-        uid: screenModel.user.uid,
-        email: screenModel.user.email,
-        timestamp: timestamp,
-        x: x,
-        y: y,
-        z: z,
-      );
-      screenModel.data?.accelCollection.add(ac);
-
-      String docID = await FirebaseFirestoreController.addAccelerometerData(
-          accelCollect: ac);
-      print(docID);
-
-      screenModel.count += 1;
-    } catch (e) {
-      print("ERROR: activeAccelerometer() ----- $e");
-    }
-  }
-
-  void pauseTimer() {
-    screenModel.timer!.cancel();
-    screenModel.accelSub?.pause();
-    setState(() {
-      screenModel.count = 0;
-    });
-  }
+  }  
 
   @override
   void dispose() {
@@ -195,9 +130,41 @@ class _Controller {
 
   _Controller(this.state);
 
-  Future<void> initTimer() async {
-    state.screenModel.timer =
-        Timer(const Duration(seconds: 5), state.startTimer);
+  Future<void> initCollection() async {
+    state.screenModel.timer = Timer.periodic(
+        // TO-DO: needs to be changed to grab duration from settings
+        // ignore: prefer_const_constructors
+        Duration(seconds: 5),
+        (timer) => collectData());
+  }
+
+  Future<void> activeAccelerometer(AccelerometerEvent? eve) async {
+    try {
+      DateTime timestamp = DateTime.now();
+      double? x = eve?.x;
+      double? y = eve?.y;
+      double? z = eve?.z;
+      // ignore: avoid_print
+      print("$timestamp: $x | $y | $z");
+      AccelerometerCollect ac = AccelerometerCollect(
+        uid: state.screenModel.user.uid,
+        email: state.screenModel.user.email,
+        timestamp: timestamp,
+        x: x,
+        y: y,
+        z: z,
+      );
+      state.screenModel.data?.accelCollection.add(ac);
+
+      String docID = await FirebaseFirestoreController.addAccelerometerData(
+          accelCollect: ac);
+      // ignore: avoid_print
+      print(docID);
+      state.screenModel.count += 1;
+    } catch (e) {
+      // ignore: avoid_print
+      print("ERROR: activeAccelerometer() ----- $e");
+    }
   }
 
   Future<void> loadData() async {
@@ -219,6 +186,7 @@ class _Controller {
         state.screenModel.data = null;
       }
     } catch (e) {
+      // ignore: avoid_print
       print("======= couldn't load data: $e");
     }
   }
@@ -232,9 +200,11 @@ class _Controller {
         AccountSettings s = AccountSettings(uid: state.screenModel.user.uid);
         s.docId = await FirebaseFirestoreController.createSettings(settings: s);
       } else {
+        // ignore: avoid_print
         print('settings exist already girl');
       }
     } catch (e) {
+      // ignore: avoid_print
       if (Constant.devMode) print('++++ settings check/create error $e');
       showSnackBar(
           context: state.context, message: 'settings check/creation error $e');
@@ -246,6 +216,7 @@ class _Controller {
       state.settings = await FirebaseFirestoreController.getSettings(
           uid: state.screenModel.user.uid);
     } catch (e) {
+      // ignore: avoid_print
       if (Constant.devMode) print('Account settings get Error: $e');
       showSnackBar(
         context: state.context,
@@ -269,5 +240,26 @@ class _Controller {
 
   void initAccel() {
     state.screenModel.data?.initAccel();
+  }
+
+  void collectData() {
+    try {
+      AccelerometerEvent? accelEvent;
+      state.screenModel.accelSub = accelerometerEvents.listen((eve) {
+        if (state.mounted) {
+          state.render(() {
+            accelEvent = eve;
+          });
+        }
+      });
+
+      if (state.screenModel.timer == null ||
+          state.screenModel.timer!.isActive) {
+        activeAccelerometer(accelEvent);
+      }
+    } catch (e) {
+      // ignore: avoid_print
+      print("ERROR: startTimer() ----- $e");
+    }
   }
 }

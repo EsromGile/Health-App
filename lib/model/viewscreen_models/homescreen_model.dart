@@ -7,7 +7,7 @@ class HomeScreenModel {
   User user;
   MyData? data;
   late DateTime today;
-  Timer? timer; 
+  Timer? timer;
   bool isLoaded = false;
   StreamSubscription? accelSub;
   int count = 0;
