@@ -35,15 +35,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    
     super.initState();
-    con = _Controller(this);
-    screenModel.accelSub = accelerometerEvents.listen((event) {});
     screenModel = HomeScreenModel(user: Auth.user!);
+    con = _Controller(this);
+
+    con.addAccelerometerListener();
     con.settingsCheck();
     con.pullSettings();
     con.loadData();
+    con.initAccel();
     con.initTimer();
-    screenModel.data?.initAccel();
   }
 
   @override
@@ -131,8 +133,8 @@ class _HomeScreenState extends State<HomeScreen> {
       });
 
       if (screenModel.timer == null || screenModel.timer!.isActive) {
-        screenModel.timer  = Timer.periodic(Duration(seconds: settings.collectionFrequency),
-            (timer) {
+        screenModel.timer = Timer.periodic(
+            Duration(seconds: settings.collectionFrequency), (timer) {
           if (screenModel.count > 3) {
             pauseTimer();
           } else {
@@ -194,7 +196,8 @@ class _Controller {
   _Controller(this.state);
 
   Future<void> initTimer() async {
-    state.screenModel.timer = Timer(const Duration(seconds: 5), state.startTimer);
+    state.screenModel.timer =
+        Timer(const Duration(seconds: 5), state.startTimer);
   }
 
   Future<void> loadData() async {
@@ -220,14 +223,6 @@ class _Controller {
     }
   }
 
-  void signOut() {
-    Auth.signOut();
-  }
-
-  void settings() {
-    Navigator.pushNamed(state.context, SettingsScreen.routeName);
-  }
-
   Future<void> settingsCheck() async {
     try {
       //test if settings data exists. if not, create it
@@ -251,7 +246,6 @@ class _Controller {
       state.settings = await FirebaseFirestoreController.getSettings(
           uid: state.screenModel.user.uid);
     } catch (e) {
-      // ignore: avoid_print
       if (Constant.devMode) print('Account settings get Error: $e');
       showSnackBar(
         context: state.context,
@@ -259,5 +253,21 @@ class _Controller {
         seconds: 5,
       );
     }
+  }
+
+  void signOut() {
+    Auth.signOut();
+  }
+
+  void settings() {
+    Navigator.pushNamed(state.context, SettingsScreen.routeName);
+  }
+
+  void addAccelerometerListener() {
+    state.screenModel.accelSub = accelerometerEvents.listen((event) {});
+  }
+
+  void initAccel() {
+    state.screenModel.data?.initAccel();
   }
 }
