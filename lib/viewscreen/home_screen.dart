@@ -30,8 +30,6 @@ class _HomeScreenState extends State<HomeScreen> {
   late _Controller con;
   late HomeScreenModel screenModel;
   late AccountSettings settings;
-  StreamSubscription? accelSub;
-  int count = 0;
 
   void render(fn) => setState(fn);
 
@@ -39,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     con = _Controller(this);
-    accelSub = accelerometerEvents.listen((event) {});
+    screenModel.accelSub = accelerometerEvents.listen((event) {});
     screenModel = HomeScreenModel(user: Auth.user!);
     con.settingsCheck();
     con.pullSettings();
@@ -124,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void startTimer() {
     try {
       AccelerometerEvent? accelEvent;
-      accelSub = accelerometerEvents.listen((eve) {
+      screenModel.accelSub = accelerometerEvents.listen((eve) {
         if (mounted) {
           setState(() {
             accelEvent = eve;
@@ -135,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (screenModel.timer == null || screenModel.timer!.isActive) {
         screenModel.timer  = Timer.periodic(Duration(seconds: settings.collectionFrequency),
             (timer) {
-          if (count > 3) {
+          if (screenModel.count > 3) {
             pauseTimer();
           } else {
             activeAccelerometer(accelEvent);
@@ -168,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
           accelCollect: ac);
       print(docID);
 
-      count += 1;
+      screenModel.count += 1;
     } catch (e) {
       print("ERROR: activeAccelerometer() ----- $e");
     }
@@ -176,16 +174,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void pauseTimer() {
     screenModel.timer!.cancel();
-    accelSub?.pause();
+    screenModel.accelSub?.pause();
     setState(() {
-      count = 0;
+      screenModel.count = 0;
     });
   }
 
   @override
   void dispose() {
     screenModel.timer!.cancel();
-    accelSub?.cancel();
+    screenModel.accelSub?.cancel();
     super.dispose();
   }
 }

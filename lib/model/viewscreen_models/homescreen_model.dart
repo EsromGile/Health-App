@@ -9,6 +9,8 @@ class HomeScreenModel {
   late DateTime today;
   Timer? timer; 
   bool isLoaded = false;
+  StreamSubscription? accelSub;
+  int count = 0;
 
   HomeScreenModel({required this.user}) {
     today = DateTime.now();
