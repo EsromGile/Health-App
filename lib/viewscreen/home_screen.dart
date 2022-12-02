@@ -30,7 +30,6 @@ class _HomeScreenState extends State<HomeScreen> {
   late _Controller con;
   late HomeScreenModel screenModel;
   late AccountSettings settings;
-  late Timer timer;
   StreamSubscription? accelSub;
   int count = 0;
 
@@ -45,14 +44,12 @@ class _HomeScreenState extends State<HomeScreen> {
     con.settingsCheck();
     con.pullSettings();
     con.loadData();
+    con.initTimer();
     screenModel.data?.initAccel();
-    timer = Timer(const Duration(seconds: 5), startTimer);
   }
 
   @override
   Widget build(BuildContext context) {
-    startTimer(); //figure out best way to use this
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Kirby Collects Your Health Data"),
@@ -135,8 +132,9 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       });
 
-      if (timer == null || !timer.isActive) {
-        timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      if (screenModel.timer == null || screenModel.timer!.isActive) {
+        screenModel.timer  = Timer.periodic(Duration(seconds: settings.collectionFrequency),
+            (timer) {
           if (count > 3) {
             pauseTimer();
           } else {
@@ -177,7 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void pauseTimer() {
-    timer.cancel();
+    screenModel.timer!.cancel();
     accelSub?.pause();
     setState(() {
       count = 0;
@@ -186,7 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
-    timer.cancel();
+    screenModel.timer!.cancel();
     accelSub?.cancel();
     super.dispose();
   }
@@ -196,6 +194,10 @@ class _Controller {
   _HomeScreenState state;
 
   _Controller(this.state);
+
+  Future<void> initTimer() async {
+    state.screenModel.timer = Timer(const Duration(seconds: 5), state.startTimer);
+  }
 
   Future<void> loadData() async {
     try {
