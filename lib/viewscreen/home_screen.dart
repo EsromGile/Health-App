@@ -42,6 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
     con.loadData();
     con.initAccel();
     con.initCollection();
+    con.uploadData();
   }
 
   @override
@@ -134,7 +135,7 @@ class _Controller {
     state.screenModel.timer = Timer.periodic(
         // TO-DO: needs to be changed to grab duration from settings
         // ignore: prefer_const_constructors
-        Duration(seconds: 5),
+        Duration(seconds: 9),
         (timer) => collectData());
   }
 
@@ -219,19 +220,20 @@ class _Controller {
       state.screenModel.accelSub = accelerometerEvents.listen((eve) {
         if (state.mounted) {
           state.render(() {
-            // (state.settings.collectionFrequency/2) as int
-            accelEvent = eve;
+            // accelEvent = eve;
+            DateTime time = DateTime.now();
+            activeAccelerometer(time, eve);
           });
+          // (state.settings.collectionFrequency/2) as int
+          // print('${accelEvent?.x} , ${accelEvent?.y}, ${accelEvent?.z}');
+
         }
       });
-      // print('${accelEvent?.x} , ${accelEvent?.y}, ${accelEvent?.z}');
-      Timer.periodic(const Duration(seconds: 5), (timer) {
-        DateTime time = DateTime.now();
-        activeAccelerometer(time,accelEvent);
-      });
+      // activeAccelerometer(time, accelEvent);
+      // Timer.periodic(const Duration(seconds: 5), (timer) {
+      // });
       // if ((state.screenModel.timer == null) ||
       //     state.screenModel.timer!.isActive) {
-      //   activeAccelerometer(accelEvent);
       // }
     } catch (e) {
       // ignore: avoid_print
@@ -239,9 +241,12 @@ class _Controller {
     }
   }
 
-  Future<void> activeAccelerometer(DateTime timestamp, AccelerometerEvent? eve) async {
+  Future<void> activeAccelerometer(
+      DateTime timestamp, AccelerometerEvent? eve) async {
     try {
-      DateTime ts =timestamp;
+      // Timer.periodic(Duration(seconds: state.settings.collectionFrequency),
+      //     (timer) async {
+      DateTime ts = timestamp;
       double? x = eve?.x;
       double? y = eve?.y;
       double? z = eve?.z;
@@ -257,14 +262,25 @@ class _Controller {
       );
       state.screenModel.data?.accelCollection.add(ac);
 
-      String docID = await FirebaseFirestoreController.addAccelerometerData(
-          accelCollect: ac);
-      // ignore: avoid_print
-      print(docID);
       state.screenModel.count += 1;
+      // });
     } catch (e) {
       // ignore: avoid_print
       print("ERROR: activeAccelerometer() ----- $e");
     }
+  }
+
+  Future<void> uploadData() async {
+    // if (state.screenModel.data!.accelCollection != null) {
+       final uploadTimer = Timer.periodic(const Duration(seconds: 30), (timer) async {
+        for (var accel in state.screenModel.data!.accelCollection) {
+          String docID = await FirebaseFirestoreController.addAccelerometerData(
+              accelCollect: accel);
+          // ignore: avoid_print
+          print(docID);
+        }
+        state.screenModel.data!.accelCollection.clear();
+      });
+    // }
   }
 }
