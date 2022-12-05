@@ -15,7 +15,7 @@ class AccountSettings {
     this.docId,
     this.uid = '',
     this.uploadRate = 0,
-    this.collectionFrequency = 30,
+    this.collectionFrequency = 10,
   });
 
   Map<String, dynamic> toFirestoreDoc() {
@@ -42,7 +42,7 @@ class AccountSettings {
 
 Map<String, int> dataCollectionFrequency = {
   //in seconds
-  "15 Seconds": 5,
+  "10 Seconds": 10,
   "30 seconds": 30,
   "1 minute": 60,
   "2 minutes": 120,

@@ -115,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       );
     }
-  }  
+  }
 
   @override
   void dispose() {
@@ -136,35 +136,6 @@ class _Controller {
         // ignore: prefer_const_constructors
         Duration(seconds: 5),
         (timer) => collectData());
-  }
-
-  Future<void> activeAccelerometer(AccelerometerEvent? eve) async {
-    try {
-      DateTime timestamp = DateTime.now();
-      double? x = eve?.x;
-      double? y = eve?.y;
-      double? z = eve?.z;
-      // ignore: avoid_print
-      print("$timestamp: $x | $y | $z");
-      AccelerometerCollect ac = AccelerometerCollect(
-        uid: state.screenModel.user.uid,
-        email: state.screenModel.user.email,
-        timestamp: timestamp,
-        x: x,
-        y: y,
-        z: z,
-      );
-      state.screenModel.data?.accelCollection.add(ac);
-
-      String docID = await FirebaseFirestoreController.addAccelerometerData(
-          accelCollect: ac);
-      // ignore: avoid_print
-      print(docID);
-      state.screenModel.count += 1;
-    } catch (e) {
-      // ignore: avoid_print
-      print("ERROR: activeAccelerometer() ----- $e");
-    }
   }
 
   Future<void> loadData() async {
@@ -248,18 +219,52 @@ class _Controller {
       state.screenModel.accelSub = accelerometerEvents.listen((eve) {
         if (state.mounted) {
           state.render(() {
+            // (state.settings.collectionFrequency/2) as int
             accelEvent = eve;
           });
         }
       });
-
-      if (state.screenModel.timer == null ||
-          state.screenModel.timer!.isActive) {
-        activeAccelerometer(accelEvent);
-      }
+      // print('${accelEvent?.x} , ${accelEvent?.y}, ${accelEvent?.z}');
+      Timer.periodic(const Duration(seconds: 5), (timer) {
+        DateTime time = DateTime.now();
+        activeAccelerometer(time,accelEvent);
+      });
+      // if ((state.screenModel.timer == null) ||
+      //     state.screenModel.timer!.isActive) {
+      //   activeAccelerometer(accelEvent);
+      // }
     } catch (e) {
       // ignore: avoid_print
       print("ERROR: startTimer() ----- $e");
+    }
+  }
+
+  Future<void> activeAccelerometer(DateTime timestamp, AccelerometerEvent? eve) async {
+    try {
+      DateTime ts =timestamp;
+      double? x = eve?.x;
+      double? y = eve?.y;
+      double? z = eve?.z;
+      // ignore: avoid_print
+      // print("$ts: $x | $y | $z");
+      AccelerometerCollect ac = AccelerometerCollect(
+        uid: state.screenModel.user.uid,
+        email: state.screenModel.user.email,
+        timestamp: ts,
+        x: x,
+        y: y,
+        z: z,
+      );
+      state.screenModel.data?.accelCollection.add(ac);
+
+      String docID = await FirebaseFirestoreController.addAccelerometerData(
+          accelCollect: ac);
+      // ignore: avoid_print
+      print(docID);
+      state.screenModel.count += 1;
+    } catch (e) {
+      // ignore: avoid_print
+      print("ERROR: activeAccelerometer() ----- $e");
     }
   }
 }
