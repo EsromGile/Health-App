@@ -40,6 +40,6 @@ class MyData {
   }
 
   void initAccel(){
-    accelCollection = [];// turn into accelcollection pulls from firestore?
+    accelCollection = <AccelerometerCollect>[];// turn into accelcollection pulls from firestore?
   } 
 }
