@@ -52,4 +52,8 @@ class AccelerometerCollect {
           : null,
     );
   }
+
+  static void uploadToFirestore(){
+    
+  }
 }

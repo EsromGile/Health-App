@@ -62,7 +62,7 @@ class FirebaseFirestoreController {
     DocumentReference ref = await FirebaseFirestore.instance
         .collection(accelerometerDataCollection)
         .add(accelCollect.toFirestoreDoc());
-    print("${ref.id}");
+    // print("${ref.id}");
 
     return ref.id;
   }
