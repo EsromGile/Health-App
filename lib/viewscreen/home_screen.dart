@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
     screenModel = HomeScreenModel(user: Auth.user!);
     con = _Controller(this);
 
-    // con.addAccelerometerListener();
+    con.addAccelerometerListener();
     con.settingsCheck();
     con.pullSettings();
     con.loadData();
@@ -133,6 +133,7 @@ class _Controller {
 
   Future<void> initCollection() async {
     int secondsCounter = 0;
+
     state.screenModel.timer = Timer.periodic(
       // TO-DO: needs to be changed to grab duration from settings
       // ignore: prefer_const_constructors
@@ -140,11 +141,14 @@ class _Controller {
       (timer) {
         secondsCounter++;
         if ((secondsCounter % 9) == 0) {
-          print(secondsCounter);
-          collectData();
+          if (state.mounted) {
+            state.render(() {
+              DateTime time = DateTime.now();
+              activeAccelerometer(time, state.screenModel.accelEvent);
+            });
+          }
+          state.screenModel.accelSub!.resume();
         } else if (secondsCounter == 30) {
-          print(secondsCounter);
-
           uploadData();
         }
 
@@ -223,52 +227,19 @@ class _Controller {
   }
 
   void addAccelerometerListener() {
-    state.screenModel.accelSub = accelerometerEvents.listen((event) {});
+    state.screenModel.accelSub = accelerometerEvents.listen((event) {
+      state.screenModel.accelEvent = event;
+    });
   }
 
   void initAccel() {
     state.screenModel.data?.initAccel();
   }
 
-  void collectData() {
-    try {
-      print('collect data');
-      // AccelerometerEvent? accelEvent;
-      if (state.screenModel.accelSub == null) {
-        print('if------');
-        state.screenModel.accelSub = accelerometerEvents.listen((eve) {
-          if (state.mounted) {
-            state.render(() {
-              // accelEvent = eve;
-              DateTime time = DateTime.now();
-              activeAccelerometer(time, eve);
-            });
-          }
-        });
-      } else {
-        print('else------');
-        state.screenModel.accelSub!.resume();
-      }
-      // (state.settings.collectionFrequency/2) as int
-      // print('${accelEvent?.x} , ${accelEvent?.y}, ${accelEvent?.z}');
-
-      // activeAccelerometer(time, accelEvent);
-      // Timer.periodic(const Duration(seconds: 5), (timer) {
-      // });
-      // if ((state.screenModel.timer == null) ||
-      //     state.screenModel.timer!.isActive) {
-      // }
-    } catch (e) {
-      // ignore: avoid_print
-      print("ERROR: startTimer() ----- $e");
-    }
-  }
-
   Future<void> activeAccelerometer(
       DateTime timestamp, AccelerometerEvent? eve) async {
     try {
-      // Timer.periodic(Duration(seconds: state.settings.collectionFrequency),
-      //     (timer) async {
+     
       DateTime ts = timestamp;
       double? x = eve?.x;
       double? y = eve?.y;
@@ -286,7 +257,6 @@ class _Controller {
       state.screenModel.data?.accelCollection.add(ac);
 
       state.screenModel.count += 1;
-      // });
     } catch (e) {
       // ignore: avoid_print
       print("ERROR: activeAccelerometer() ----- $e");
@@ -294,10 +264,8 @@ class _Controller {
   }
 
   Future<void> uploadData() async {
-    // if (state.screenModel.data!.accelCollection != null) {
-    // final uploadTimer =
-    //     Timer.periodic(const Duration(seconds: 30), (timer) async {
-    state.screenModel.timer!.cancel();
+   
+    // state.screenModel.timer!.cancel();
     state.screenModel.accelSub!.pause();
     print("length: ${state.screenModel.data!.accelCollection.length}");
     for (var accel in state.screenModel.data!.accelCollection) {
@@ -306,9 +274,7 @@ class _Controller {
       // ignore: avoid_print
       print(docID);
     }
-    // state.screenModel.data!.accelCollection.remove(accel);
     state.screenModel.data!.accelCollection.clear();
-    // });
-    // }
+   
   }
 }
