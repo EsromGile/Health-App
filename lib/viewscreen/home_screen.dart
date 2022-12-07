@@ -210,10 +210,12 @@ class _Controller {
   }
 
   Future<void> pullSettings() async {
+    if (state.settings != null) return;
     try {
       state.settings = await FirebaseFirestoreController.getSettings(
           uid: state.screenModel.user.uid);
     } catch (e) {
+    if (state.settings != null) return;
       // ignore: avoid_print
       if (Constant.devMode) print('Account settings get Error: $e');
       showSnackBar(
