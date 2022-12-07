@@ -12,7 +12,7 @@ class HomeScreenModel {
   Timer? timer;
   bool isLoaded = false;
   StreamSubscription? accelSub;
-  AccelerometerEvent? accelEvent;
+  UserAccelerometerEvent? accelEvent;
   late AccountSettings settings;
   int count = 0;
 
