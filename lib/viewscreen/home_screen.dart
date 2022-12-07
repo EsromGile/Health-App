@@ -196,6 +196,7 @@ class _Controller {
       if (!settingsExists) {
         AccountSettings s = AccountSettings(uid: state.screenModel.user.uid);
         s.docId = await FirebaseFirestoreController.createSettings(settings: s);
+        state.settings = s;
       } else {
         // ignore: avoid_print
         print('settings exist already girl');
@@ -220,7 +221,8 @@ class _Controller {
         message: 'Account settings get Error: $e',
         seconds: 5,
       );
-      state.render({});
+      state.render({
+      });
     }
   }
 
@@ -251,7 +253,7 @@ class _Controller {
       double? y = eve?.y;
       double? z = eve?.z;
       // ignore: avoid_print
-      // print("$ts: $x | $y | $z");
+      print("$ts: $x | $y | $z");
       AccelerometerCollect ac = AccelerometerCollect(
         uid: state.screenModel.user.uid,
         email: state.screenModel.user.email,
