@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:health_app/model/account_settings.dart';
 import 'package:health_app/model/data.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 
@@ -12,6 +13,7 @@ class HomeScreenModel {
   bool isLoaded = false;
   StreamSubscription? accelSub;
   AccelerometerEvent? accelEvent;
+  late AccountSettings settings;
   int count = 0;
 
   HomeScreenModel({required this.user}) {

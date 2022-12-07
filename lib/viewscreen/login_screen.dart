@@ -7,6 +7,9 @@ import 'package:health_app/viewscreen/create_account_screen.dart';
 import 'package:health_app/viewscreen/view/kirby_loading.dart';
 import 'package:health_app/viewscreen/view/view_util.dart';
 
+import '../controller/firebase_firestore_controller.dart';
+import '../model/account_settings.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -116,6 +119,8 @@ class _Controller {
 
     state.render(() => state.screenModel.isSignInUnderway = true);
 
+
+    
     try {
       await Auth.signIn(email: state.screenModel.email!, password: state.screenModel.password!);
     } on FirebaseAuthException catch(e) {
@@ -142,5 +147,26 @@ class _Controller {
   
   void createAccount() {
     Navigator.pushNamed(state.context, CreateAccountScreen.routeName);
+  }
+
+  Future<void> settingsCheck(User? user) async {
+    if (user == null) return;
+    try {
+      //test if settings data exists. if not, create it
+      var settingsExists = await FirebaseFirestoreController.checkSettings(
+          uid: user.uid);
+      if (!settingsExists) {
+        AccountSettings s = AccountSettings(uid: user.uid);
+        s.docId = await FirebaseFirestoreController.createSettings(settings: s);
+      } else {
+        // ignore: avoid_print
+        print('settings exist already girl');
+      }
+    } catch (e) {
+      // ignore: avoid_print
+      if (Constant.devMode) print('++++ settings check/create error $e');
+      showSnackBar(
+          context: state.context, message: 'settings check/creation error $e');
+    }
   }
 }

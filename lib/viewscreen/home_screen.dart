@@ -27,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late _Controller con;
   late HomeScreenModel screenModel;
   late AccountSettings settings;
+  int x = 0;
 
   void render(fn) => setState(fn);
 
@@ -133,6 +134,7 @@ class _Controller {
 
   Future<void> initCollection() async {
     int secondsCounter = 0;
+    bool checkUpload = false; 
 
     state.screenModel.timer = Timer.periodic(
       // TO-DO: needs to be changed to grab duration from settings
@@ -140,7 +142,7 @@ class _Controller {
       Duration(seconds: 1),
       (timer) {
         secondsCounter++;
-        if ((secondsCounter % 9) == 0) {
+        if ((secondsCounter % state.settings.collectionFrequency) == 0) {
           if (state.mounted) {
             state.render(() {
               DateTime time = DateTime.now();
@@ -148,16 +150,19 @@ class _Controller {
             });
           }
           state.screenModel.accelSub!.resume();
-        } else if (secondsCounter == 30) {
+        } else if ((secondsCounter == state.settings.collectionFrequency+1 && state.settings.uploadRate == 0) || secondsCounter == state.settings.uploadRate) {
           uploadData();
+          checkUpload = true;
         }
 
-        if (secondsCounter >= 30) {
+        if (checkUpload == true) {
           secondsCounter = 0;
+          checkUpload = false;
         }
       },
     );
-  }
+  } 
+
 
   Future<void> loadData() async {
     try {
@@ -215,6 +220,7 @@ class _Controller {
         message: 'Account settings get Error: $e',
         seconds: 5,
       );
+      state.render({});
     }
   }
 
