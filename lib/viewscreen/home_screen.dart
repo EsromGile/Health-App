@@ -233,7 +233,7 @@ class _Controller {
   }
 
   void addAccelerometerListener() {
-    state.screenModel.accelSub = accelerometerEvents.listen((event) {
+    state.screenModel.accelSub = userAccelerometerEvents.listen((event) {
       state.screenModel.accelEvent = event;
     });
   }
@@ -243,7 +243,7 @@ class _Controller {
   }
 
   Future<void> activeAccelerometer(
-      DateTime timestamp, AccelerometerEvent? eve) async {
+      DateTime timestamp, UserAccelerometerEvent? eve) async {
     try {
      
       DateTime ts = timestamp;
