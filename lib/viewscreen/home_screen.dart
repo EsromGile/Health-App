@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:health_app/controller/auth_controller.dart';
 import 'package:health_app/controller/firebase_firestore_controller.dart';
 import 'package:health_app/model/accelerometer_collect.dart';
+import 'package:health_app/model/accelerometer_reading.dart';
 import 'package:health_app/model/account_settings.dart';
 import 'package:health_app/model/constant.dart';
 import 'package:health_app/model/test_readings.dart';
@@ -252,7 +253,7 @@ class _Controller {
       double? z = eve?.z;
       // ignore: avoid_print
       // print("$ts: $x | $y | $z");
-      AccelerometerCollect ac = AccelerometerCollect(
+      AccelerometerReading ac = AccelerometerReading.collection(
         uid: state.screenModel.user.uid,
         email: state.screenModel.user.email,
         timestamp: ts,
