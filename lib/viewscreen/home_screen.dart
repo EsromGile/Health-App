@@ -39,7 +39,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
     con.addAccelerometerListener();
     con.settingsCheck();
-    con.pullSettings();
     con.loadData();
     con.initAccel();
     con.initCollection();
@@ -134,7 +133,9 @@ class _Controller {
 
   Future<void> initCollection() async {
     int secondsCounter = 0;
-    bool checkUpload = false; 
+    bool checkUpload = false;
+
+  
 
     state.screenModel.timer = Timer.periodic(
       // TO-DO: needs to be changed to grab duration from settings
@@ -142,6 +143,13 @@ class _Controller {
       Duration(seconds: 1),
       (timer) {
         secondsCounter++;
+
+        if ((secondsCounter == state.settings.collectionFrequency + 1 &&
+                state.settings.uploadRate == 0) ||
+            secondsCounter == state.settings.uploadRate) {
+          uploadData();
+          checkUpload = true;
+        }
         if ((secondsCounter % state.settings.collectionFrequency) == 0) {
           if (state.mounted) {
             state.render(() {
@@ -150,10 +158,8 @@ class _Controller {
             });
           }
           state.screenModel.accelSub!.resume();
-        } else if ((secondsCounter == state.settings.collectionFrequency+1 && state.settings.uploadRate == 0) || secondsCounter == state.settings.uploadRate) {
-          uploadData();
-          checkUpload = true;
-        }
+        } 
+        
 
         if (checkUpload == true) {
           secondsCounter = 0;
@@ -161,8 +167,7 @@ class _Controller {
         }
       },
     );
-  } 
-
+  }
 
   Future<void> loadData() async {
     try {
@@ -200,6 +205,22 @@ class _Controller {
       } else {
         // ignore: avoid_print
         print('settings exist already girl');
+        //moved pullSettings() here
+        try {
+          state.settings = await FirebaseFirestoreController.getSettings(
+              uid: state.screenModel.user.uid);
+        } catch (e) {
+          // ignore: avoid_print
+          if (Constant.devMode) print('Account settings get Error: $e');
+          showSnackBar(
+            context: state.context,
+            message: 'Account settings get Error: $e',
+            seconds: 5,
+          );
+          state.render({
+            initCollection()
+          });
+        }
       }
     } catch (e) {
       // ignore: avoid_print
@@ -209,24 +230,6 @@ class _Controller {
     }
   }
 
-  Future<void> pullSettings() async {
-    if (state.settings != null) return;
-    try {
-      state.settings = await FirebaseFirestoreController.getSettings(
-          uid: state.screenModel.user.uid);
-    } catch (e) {
-    if (state.settings != null) return;
-      // ignore: avoid_print
-      if (Constant.devMode) print('Account settings get Error: $e');
-      showSnackBar(
-        context: state.context,
-        message: 'Account settings get Error: $e',
-        seconds: 5,
-      );
-      state.render({
-      });
-    }
-  }
 
   void signOut() {
     Auth.signOut();
@@ -249,7 +252,6 @@ class _Controller {
   Future<void> activeAccelerometer(
       DateTime timestamp, UserAccelerometerEvent? eve) async {
     try {
-     
       DateTime ts = timestamp;
       double? x = eve?.x;
       double? y = eve?.y;
@@ -274,7 +276,6 @@ class _Controller {
   }
 
   Future<void> uploadData() async {
-   
     // state.screenModel.timer!.cancel();
     state.screenModel.accelSub!.pause();
     print("length: ${state.screenModel.data!.accelCollection.length}");
@@ -285,6 +286,5 @@ class _Controller {
       print(docID);
     }
     state.screenModel.data!.accelCollection.clear();
-   
   }
 }
