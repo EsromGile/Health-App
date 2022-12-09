@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:health_app/model/accelerometer_collect.dart';
+import 'package:health_app/model/accelerometer_reading.dart';
 import 'package:health_app/model/account_settings.dart';
 import 'package:health_app/model/constant.dart';
 import 'package:health_app/model/user_account.dart';
@@ -57,7 +58,7 @@ class FirebaseFirestoreController {
   }
 
   static Future<String> addAccelerometerData(
-      {required AccelerometerCollect accelCollect}) async {
+      {required AccelerometerReading accelCollect}) async {
     String accelerometerDataCollection = 'accelerometerdata_collection';
     DocumentReference ref = await FirebaseFirestore.instance
         .collection(accelerometerDataCollection)

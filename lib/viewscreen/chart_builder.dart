@@ -34,7 +34,7 @@ class HorizontalBarLabelChart extends StatelessWidget {
     return [
       charts.Series<AccelerometerReading, String>(
           id: 'Sales',
-          domainFn: (AccelerometerReading reading, _) => reading.timestamp.format("g:i a").toString(),
+          domainFn: (AccelerometerReading reading, _) => reading.timestamp!.format("g:i a").toString(),
           measureFn: (AccelerometerReading reading, _) => reading.movementOccured,
           data: data,
       )

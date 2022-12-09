@@ -14,6 +14,8 @@ import 'package:health_app/viewscreen/settings_screen.dart';
 import 'package:health_app/viewscreen/view/view_util.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 
+import '../model/accelerometer_reading.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -262,8 +264,8 @@ class _Controller {
       double? y = eve?.y;
       double? z = eve?.z;
       // ignore: avoid_print
-      print("$ts: $x | $y | $z");
-      AccelerometerCollect ac = AccelerometerCollect(
+      // print("$ts: $x | $y | $z");
+      AccelerometerReading ac = AccelerometerReading.collection(
         uid: state.screenModel.user.uid,
         email: state.screenModel.user.email,
         timestamp: ts,

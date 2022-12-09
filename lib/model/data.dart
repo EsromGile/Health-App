@@ -7,7 +7,7 @@ class MyData {
   DateTime today;
   final UserAccount? user;
   late List<AccelerometerReading> readings;
-  late List<AccelerometerCollect> accelCollection; //
+  late List<AccelerometerReading> accelCollection; //
 
   MyData({
     required this.user,
@@ -24,7 +24,7 @@ class MyData {
         i < readings.length &&
             current.isBefore(current.add(const Duration(days: 1)));
         i++) {
-      if (readings[i].timestamp.isBefore(current)) {
+      if (readings[i].timestamp!.isBefore(current)) {
         num += readings[i].movementOccured;
       } else {
         normalizedReadings.add(
@@ -40,6 +40,6 @@ class MyData {
   }
 
   void initAccel(){
-    accelCollection = <AccelerometerCollect>[];// turn into accelcollection pulls from firestore?
+    accelCollection = <AccelerometerReading>[];// turn into accelcollection pulls from firestore?
   } 
 }
