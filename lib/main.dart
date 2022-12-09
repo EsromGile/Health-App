@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:health_app/viewscreen/create_account_screen.dart';
+import 'package:health_app/viewscreen/display_screen.dart';
 import 'package:health_app/viewscreen/settings_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:health_app/viewscreen/start_dispatcher.dart';
@@ -25,6 +26,7 @@ class HealthApp extends StatelessWidget {
         StartDispatcher.routeName: (context) => const StartDispatcher(),
         SettingsScreen.routeName:(context) => const SettingsScreen(),
         CreateAccountScreen.routeName: (context) => const CreateAccountScreen(),
+        DisplayScreen.routeName:(context) => const DisplayScreen(),
       },
       theme: ThemeData(
         colorScheme:

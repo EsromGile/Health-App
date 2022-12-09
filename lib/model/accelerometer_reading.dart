@@ -1,3 +1,5 @@
+import '../controller/auth_controller.dart';
+
 enum DocKeyAccelData {
   email,
   x,
@@ -20,7 +22,7 @@ class AccelerometerReading {
 
   AccelerometerReading(
       {required this.timestamp, required this.movementOccured});
-      
+
   AccelerometerReading.collection(
       {this.docID,
       this.uid,
@@ -41,12 +43,10 @@ class AccelerometerReading {
   }
 
   factory AccelerometerReading.fromFirestoreDoc(
-      {required Map<String, dynamic> doc,
-      required String docID,
-      required String uid}) {
+      {required Map<String, dynamic> doc, required String docID}) {
     return AccelerometerReading.collection(
       docID: docID,
-      uid: uid,
+      uid: Auth.user!.uid,
       email: doc[DocKeyAccelData.email.name] ??= '',
       x: doc[DocKeyAccelData.x.name] ??= '',
       y: doc[DocKeyAccelData.y.name] ??= '',
@@ -57,5 +57,17 @@ class AccelerometerReading {
             )
           : null,
     );
+  }
+
+  bool isValid() {
+    if (email!.isEmpty ||
+        timestamp == null ||
+        x == null ||
+        y == null ||
+        z == null) {
+      return false;
+    } else {
+      return true;
+    }
   }
 }

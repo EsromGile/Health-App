@@ -14,6 +14,7 @@ import 'package:health_app/viewscreen/view/view_util.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 
 import '../model/accelerometer_reading.dart';
+import 'display_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -67,6 +68,11 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: const Icon(Icons.settings),
               title: const Text('Settings'),
               onTap: con.settings,
+            ),
+            ListTile(
+              leading: const Icon(Icons.data_array),
+              title: const Text('Display Data'),
+              onTap: con.displayScreen,
             ),
             ListTile(
               leading: const Icon(Icons.logout),
@@ -271,6 +277,9 @@ class _Controller {
 
   void settings() {
     Navigator.pushNamed(state.context, SettingsScreen.routeName);
+  }
+  void displayScreen() {
+    Navigator.pushNamed(state.context, DisplayScreen.routeName);
   }
 
   void addAccelerometerListener() {
