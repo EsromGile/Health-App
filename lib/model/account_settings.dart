@@ -52,7 +52,7 @@ Map<String, int> uploadFrequency = {
   // in seconds
   "Immediately": 0, // 0 minutes
   "30 seconds": 30,
-  "1.5 minute": 90, // 1 minute
+  "1.5 minutes": 90, // 1 minute
   "15 minutes": 900, //15 minutes
   "30 minutes": 1800, //30 minutes
   "1 hour": 3600, //60 minutes

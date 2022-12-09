@@ -56,10 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: ListView(
           children: [
             UserAccountsDrawerHeader(
-              currentAccountPicture: const Icon(
-                Icons.person,
-                size: 70,
-              ),
+              currentAccountPicture: SizedBox(height: 70, child: Image.asset("images/kirby-profile.png"),),
               accountName: const Text('No Profile'),
               accountEmail: Text(screenModel.user.email.toString()),
             ),
