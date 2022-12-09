@@ -283,6 +283,7 @@ class _Controller {
   Future<void> uploadData() async {
     // state.screenModel.timer!.cancel();
     state.screenModel.accelSub!.pause();
+    // ignore: avoid_print
     print("length: ${state.screenModel.data!.accelCollection.length}");
     for (var accel in state.screenModel.data!.accelCollection) {
       String docID = await FirebaseFirestoreController.addAccelerometerData(

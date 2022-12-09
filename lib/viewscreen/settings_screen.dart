@@ -154,6 +154,9 @@ class _Controller {
   }
 
   void returnHome() {
+    Navigator.pop(state.context);
+    Navigator.pop(state.context);
+    Navigator.pop(state.context);
     Navigator.pushNamed(state.context, StartDispatcher.routeName);
   }
 
