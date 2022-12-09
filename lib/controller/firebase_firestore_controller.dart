@@ -1,13 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:health_app/model/accelerometer_collect.dart';
 import 'package:health_app/model/accelerometer_reading.dart';
 import 'package:health_app/model/account_settings.dart';
 import 'package:health_app/model/constant.dart';
 import 'package:health_app/model/user_account.dart';
 
 class FirebaseFirestoreController {
-  final UserAccount
-      account; /* we need both settings and data storage 
+  final UserAccount account; /* we need both settings and data storage 
                                might as well make it easy on ourselves*/
   FirebaseFirestoreController({required this.account});
 

@@ -119,8 +119,6 @@ class _Controller {
 
     state.render(() => state.screenModel.isSignInUnderway = true);
 
-
-    
     try {
       await Auth.signIn(email: state.screenModel.email!, password: state.screenModel.password!);
     } on FirebaseAuthException catch(e) {
@@ -140,11 +138,8 @@ class _Controller {
       showSnackBar(
           context: state.context, seconds: 20, message: "Sign In Error! $e");
     }
-
-    
   }
 
-  
   void createAccount() {
     Navigator.pushNamed(state.context, CreateAccountScreen.routeName);
   }

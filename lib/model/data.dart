@@ -1,4 +1,3 @@
-import 'package:health_app/model/accelerometer_collect.dart';
 import 'package:health_app/model/accelerometer_reading.dart';
 import 'package:health_app/model/user_account.dart';
 

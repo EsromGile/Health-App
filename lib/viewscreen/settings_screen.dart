@@ -153,13 +153,6 @@ class _Controller {
     state.render(() {});
   }
 
-  void returnHome() {
-    Navigator.pop(state.context);
-    Navigator.pop(state.context);
-    Navigator.pop(state.context);
-    Navigator.pushNamed(state.context, StartDispatcher.routeName);
-  }
-
   void onChangedUploadFrequency(int? value) {
     if (value != null) state.settings.uploadRate = value;
   }
@@ -170,6 +163,13 @@ class _Controller {
 
   void edit() {
     state.render(() => state.screenModel.editMode = true);
+  }
+
+  void returnHome() {
+    Navigator.pop(state.context);
+    Navigator.pop(state.context);
+    Navigator.pop(state.context);
+    Navigator.pushNamed(state.context, StartDispatcher.routeName);
   }
 
   void save() async {

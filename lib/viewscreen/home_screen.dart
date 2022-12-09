@@ -4,7 +4,6 @@ import 'package:date_time_format/date_time_format.dart';
 import 'package:flutter/material.dart';
 import 'package:health_app/controller/auth_controller.dart';
 import 'package:health_app/controller/firebase_firestore_controller.dart';
-import 'package:health_app/model/accelerometer_collect.dart';
 import 'package:health_app/model/account_settings.dart';
 import 'package:health_app/model/constant.dart';
 import 'package:health_app/model/test_readings.dart';
@@ -45,7 +44,6 @@ class _HomeScreenState extends State<HomeScreen> {
     con.loadData();
     con.initAccel();
     con.initCollection();
-    // con.uploadData();
   }
 
   @override
@@ -93,8 +91,6 @@ class _HomeScreenState extends State<HomeScreen> {
     if (screenModel.isLoaded) {
       return Column(
         children: [
-          // Text('${settings.uploadRate}'),
-          // Text('${settings.collectionFrequency}'),
           Text(
             screenModel.today.format("M d, Y"),
             style: Theme.of(context).textTheme.headline5,
@@ -146,35 +142,28 @@ class _Controller {
       // ignore: prefer_const_constructors
       Duration(seconds: 1),
       (timer) {
-        // if (state.settings != null) {
-
-          // print("${state.settings.collectionFrequency}: ${state.settings.uploadRate}");
-          secondsCounter++;
-          if ((secondsCounter % state.settings.collectionFrequency) == 0) {
-            if (state.mounted) {
-              state.render(() {
-                // print("active accelerometer");
-                DateTime time = DateTime.now();
-                activeAccelerometer(time, state.screenModel.accelEvent);
-              });
-            }
-            state.screenModel.accelSub!.resume();
-          } 
-          if ((secondsCounter ==
-                      state.settings.collectionFrequency + 1 &&
-                  state.settings.uploadRate == 0) ||
-              secondsCounter == state.settings.uploadRate) {
-            // print("upload data");
-
-            uploadData();
-            checkUpload = true;
+        secondsCounter++;
+        if ((secondsCounter % state.settings.collectionFrequency) == 0) {
+          if (state.mounted) {
+            state.render(() {
+              DateTime time = DateTime.now();
+              activeAccelerometer(time, state.screenModel.accelEvent);
+            });
           }
+          state.screenModel.accelSub!.resume();
+        }
+        if ((secondsCounter == state.settings.collectionFrequency + 1 &&
+                state.settings.uploadRate == 0) ||
+            secondsCounter == state.settings.uploadRate) {
 
-          if (checkUpload == true) {
-            secondsCounter = 0;
-            checkUpload = false;
-          }
-        // }
+          uploadData();
+          checkUpload = true;
+        }
+
+        if (checkUpload == true) {
+          secondsCounter = 0;
+          checkUpload = false;
+        }
       },
     );
   }
@@ -215,7 +204,6 @@ class _Controller {
       } else {
         // ignore: avoid_print
         print('settings exist already girl');
-        //moved pullSettings() here
         try {
           state.settings = await FirebaseFirestoreController.getSettings(
               uid: state.screenModel.user.uid);
@@ -237,25 +225,7 @@ class _Controller {
           context: state.context, message: 'settings check/creation error $e');
     }
   }
-
-  void signOut() {
-    Auth.signOut();
-  }
-
-  void settings() {
-    Navigator.pushNamed(state.context, SettingsScreen.routeName);
-  }
-
-  void addAccelerometerListener() {
-    state.screenModel.accelSub = userAccelerometerEvents.listen((event) {
-      state.screenModel.accelEvent = event;
-    });
-  }
-
-  void initAccel() {
-    state.screenModel.data?.initAccel();
-  }
-
+  
   Future<void> activeAccelerometer(
       DateTime timestamp, UserAccelerometerEvent? eve) async {
     try {
@@ -283,7 +253,6 @@ class _Controller {
   }
 
   Future<void> uploadData() async {
-    // state.screenModel.timer!.cancel();
     state.screenModel.accelSub!.pause();
     // ignore: avoid_print
     print("length: ${state.screenModel.data!.accelCollection.length}");
@@ -295,4 +264,23 @@ class _Controller {
     }
     state.screenModel.data!.accelCollection.clear();
   }
+
+  void signOut() {
+    Auth.signOut();
+  }
+
+  void settings() {
+    Navigator.pushNamed(state.context, SettingsScreen.routeName);
+  }
+
+  void addAccelerometerListener() {
+    state.screenModel.accelSub = userAccelerometerEvents.listen((event) {
+      state.screenModel.accelEvent = event;
+    });
+  }
+
+  void initAccel() {
+    state.screenModel.data?.initAccel();
+  }
+
 }
