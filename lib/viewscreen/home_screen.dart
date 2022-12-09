@@ -36,6 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     screenModel = HomeScreenModel(user: Auth.user!);
     con = _Controller(this);
+    settings = AccountSettings();
 
     con.addAccelerometerListener();
     con.settingsCheck();
@@ -135,36 +136,44 @@ class _Controller {
     int secondsCounter = 0;
     bool checkUpload = false;
 
-  
+    print("initcollection");
+
+    
 
     state.screenModel.timer = Timer.periodic(
       // TO-DO: needs to be changed to grab duration from settings
       // ignore: prefer_const_constructors
       Duration(seconds: 1),
       (timer) {
-        secondsCounter++;
+        // if (state.settings != null) {
 
-        if ((secondsCounter % state.settings.collectionFrequency) == 0) {
-          if (state.mounted) {
-            state.render(() {
-              DateTime time = DateTime.now();
-              activeAccelerometer(time, state.screenModel.accelEvent);
-            });
+          // print("${state.settings.collectionFrequency}: ${state.settings.uploadRate}");
+          secondsCounter++;
+          if ((secondsCounter % state.settings.collectionFrequency) == 0) {
+            if (state.mounted) {
+              state.render(() {
+                // print("active accelerometer");
+                DateTime time = DateTime.now();
+                activeAccelerometer(time, state.screenModel.accelEvent);
+              });
+            }
+            state.screenModel.accelSub!.resume();
+          } 
+          if ((secondsCounter ==
+                      state.settings.collectionFrequency + 1 &&
+                  state.settings.uploadRate == 0) ||
+              secondsCounter == state.settings.uploadRate) {
+            // print("upload data");
+
+            uploadData();
+            checkUpload = true;
           }
-          state.screenModel.accelSub!.resume();
-        } 
-        else if ((secondsCounter == state.settings.collectionFrequency + 1 &&
-                state.settings.uploadRate == 0) ||
-            secondsCounter == state.settings.uploadRate) {
-          uploadData();
-          checkUpload = true;
-        }
-        
 
-        if (checkUpload == true) {
-          secondsCounter = 0;
-          checkUpload = false;
-        }
+          if (checkUpload == true) {
+            secondsCounter = 0;
+            checkUpload = false;
+          }
+        // }
       },
     );
   }
@@ -217,9 +226,7 @@ class _Controller {
             message: 'Account settings get Error: $e',
             seconds: 5,
           );
-          state.render({
-            initCollection()
-          });
+          state.render({initCollection()});
         }
       }
     } catch (e) {
@@ -229,7 +236,6 @@ class _Controller {
           context: state.context, message: 'settings check/creation error $e');
     }
   }
-
 
   void signOut() {
     Auth.signOut();
