@@ -144,12 +144,6 @@ class _Controller {
       (timer) {
         secondsCounter++;
 
-        if ((secondsCounter == state.settings.collectionFrequency + 1 &&
-                state.settings.uploadRate == 0) ||
-            secondsCounter == state.settings.uploadRate) {
-          uploadData();
-          checkUpload = true;
-        }
         if ((secondsCounter % state.settings.collectionFrequency) == 0) {
           if (state.mounted) {
             state.render(() {
@@ -159,6 +153,12 @@ class _Controller {
           }
           state.screenModel.accelSub!.resume();
         } 
+        else if ((secondsCounter == state.settings.collectionFrequency + 1 &&
+                state.settings.uploadRate == 0) ||
+            secondsCounter == state.settings.uploadRate) {
+          uploadData();
+          checkUpload = true;
+        }
         
 
         if (checkUpload == true) {
