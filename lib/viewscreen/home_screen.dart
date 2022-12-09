@@ -136,9 +136,8 @@ class _Controller {
     int secondsCounter = 0;
     bool checkUpload = false;
 
+    // ignore: avoid_print
     print("initcollection");
-
-    
 
     state.screenModel.timer = Timer.periodic(
       // TO-DO: needs to be changed to grab duration from settings

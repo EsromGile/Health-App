@@ -4,6 +4,7 @@ import 'package:health_app/controller/firebase_firestore_controller.dart';
 import 'package:health_app/model/account_settings.dart';
 import 'package:health_app/model/constant.dart';
 import 'package:health_app/model/viewscreen_models/settings_screen_model.dart';
+import 'package:health_app/viewscreen/start_dispatcher.dart';
 import 'package:health_app/viewscreen/view/kirby_loading.dart';
 import 'package:health_app/viewscreen/view/view_util.dart';
 
@@ -149,13 +150,11 @@ class _Controller {
   }
   void refresh() async {
     await getAccountSettings();
-    state.render(() {
-    });
+    state.render(() {});
   }
 
   void returnHome() {
-    Navigator.of(state.context).pop();
-    Navigator.of(state.context).pop();
+    Navigator.pushNamed(state.context, StartDispatcher.routeName);
   }
 
   void onChangedUploadFrequency(int? value) {
@@ -181,7 +180,8 @@ class _Controller {
     if (state.settings.docId == null) return;
 
     Map<String, dynamic> updateInfo = {};
-    updateInfo[AccountSettings.COLLECTIONRATE] = state.settings.collectionFrequency;
+    updateInfo[AccountSettings.COLLECTIONRATE] =
+        state.settings.collectionFrequency;
     updateInfo[AccountSettings.UPLOADRATE] = state.settings.uploadRate;
     try {
       FirebaseFirestoreController.updateSettings(
@@ -217,6 +217,5 @@ class _Controller {
         seconds: 5,
       );
     }
-    
   }
 }
